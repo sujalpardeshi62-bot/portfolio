@@ -3,1813 +3,1969 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sujal Pardeshi | Professional Portfolio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <title>VR Salon — Premium Beauty & Grooming</title>
+    <meta name="description" content="VR Salon - Luxury grooming crafted for modern elegance. Expert stylists, premium products, world-class beauty services in Kalyan East, Maharashtra.">
+    <link rel="icon" type="image/png" href="img/logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <style>
+        /* ==============================
+           THEME VARIABLES
+           ============================== */
         :root {
-            --bg-deep: #080808;
-            --bg-panel: #0a0a0a;
-            --bg-card: #121212;
-            --accent: #DC2626;
-            --accent-glow: rgba(220, 38, 38, 0.6);
-            --accent-dim: #7f1d1d;
-            --text-main: #E5E5E5;
-            --text-muted: #A3A3A3;
-            --font-display: 'Cinzel', serif;
-            --font-serif: 'Playfair Display', serif;
-            --font-body: 'Lato', sans-serif;
+            --gold: #D4AF37;
+            --gold-light: #F4E5A3;
+            --gold-dark: #B8960C;
+            --black: #0A0A0A;
+            --black-light: #111;
+            --black-medium: #1A1A1A;
+            --white: #FFF;
+            --gradient-gold: linear-gradient(135deg, #D4AF37, #F4E5A3, #D4AF37);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        /* ==============================
+           GLOBAL RESET
+           ============================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /* Prevent horizontal scroll on all devices */
+        html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
+        html { scroll-behavior: smooth; }
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            line-height: 1.8;
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+        }
+        ::selection { background: rgba(212,175,55,0.3); color: #fff; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* ==============================
+           SCROLL PROGRESS BAR
+           ============================== */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px;
+            z-index: 100000; background: var(--gradient-gold);
+            width: 0%; transition: width 0.1s linear;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-deep); }
-        ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+        /* ==============================
+           LOADING SCREEN
+           ============================== */
+        .loading-screen {
+            position: fixed; inset: 0; background: var(--black);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999999; transition: all 1s ease;
+        }
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
+        .loader-content { text-align: center; }
+        .loader-logo-img { width: 80px; height: 80px; object-fit: contain; margin: 0 auto 15px; animation: pulse 1.5s ease-in-out infinite; }
+        .loader-bar { width: 180px; height: 2px; background: var(--black-medium); margin: 15px auto 0; border-radius: 2px; overflow: hidden; }
+        .loader-fill { height: 100%; background: var(--gradient-gold); width: 0%; animation: fill 2s ease forwards; }
+        .loader-sub { font-family: 'Montserrat', sans-serif; font-size: .6rem; letter-spacing: 4px; color: var(--gold); margin-top: 15px; opacity: .6; text-transform: uppercase; }
+        @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+        @keyframes fill { to{width:100%} }
 
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.4;
-            pointer-events: none;
+        /* ==============================
+           TOAST NOTIFICATIONS
+           ============================== */
+        .toast-container { position: fixed; top: 90px; right: 20px; z-index: 999998; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { pointer-events: all; display: flex; align-items: center; gap: 12px; padding: 16px 22px; border-radius: 2px; backdrop-filter: blur(20px); border: 1px solid rgba(212,175,55,0.15); min-width: 300px; max-width: 420px; transform: translateX(120%); opacity: 0; transition: all .4s cubic-bezier(.25,.46,.45,.94); font-size: .82rem; line-height: 1.4; }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast.success { background: rgba(0,200,83,0.12); border-color: rgba(0,200,83,0.25); color: #00c853; }
+        .toast.warning { background: rgba(255,193,7,0.12); border-color: rgba(255,193,7,0.25); color: #ffc107; }
+        .toast.error { background: rgba(244,67,54,0.12); border-color: rgba(244,67,54,0.25); color: #f44336; }
+        .toast.info { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.2); color: var(--gold); }
+        .toast i { font-size: 1.1rem; flex-shrink: 0; }
+        .toast-close { margin-left: auto; background: none; border: none; color: inherit; cursor: pointer; opacity: .6; font-size: .8rem; padding: 4px; }
+
+        /* ==============================
+           NAVBAR
+           ============================== */
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; padding: 18px 50px; display: flex; align-items: center; justify-content: space-between; transition: all .4s ease; }
+        .navbar.scrolled { padding: 10px 50px; background: rgba(10,10,10,0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(212,175,55,0.08); }
+        .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 50%; flex-shrink: 0; }
+        .nav-brand-text { display: flex; flex-direction: column; }
+        .nav-brand-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: #fff; white-space: nowrap; }
+        .nav-brand-sub { font-size: .5rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; font-weight: 500; }
+        .nav-menu { display: flex; align-items: center; gap: 30px; list-style: none; }
+        .nav-link { font-family: 'Montserrat', sans-serif; font-size: .7rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; text-decoration: none; position: relative; transition: color .3s; }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width .3s; }
+        .nav-link:hover, .nav-link.active { color: var(--gold); }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .nav-cart-btn { position: relative; width: 38px; height: 38px; border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; justify-content: center; color: var(--gold); cursor: pointer; transition: all .3s; background: transparent; font-size: .9rem; }
+        .nav-cart-btn:hover { background: var(--gold); color: var(--black); }
+        .cart-badge { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; background: #ff4444; border-radius: 50%; font-size: .5rem; font-weight: 700; display: none; align-items: center; justify-content: center; color: #fff; }
+        .cart-badge.visible { display: flex; }
+        .nav-book-btn { padding: 9px 22px; border: 1px solid var(--gold); color: var(--gold); font-family: 'Montserrat', sans-serif; font-size: .65rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; background: transparent; transition: all .3s; text-decoration: none; }
+        .nav-book-btn:hover { background: var(--gold); color: var(--black); }
+
+        /* ==============================
+           HAMBURGER (MOBILE)
+           ============================== */
+        .hamburger { display: none; cursor: pointer; padding: 8px; z-index: 10001; position: relative; width: 40px; height: 40px; }
+        .hamburger span { width: 22px; height: 1.5px; background: var(--gold); transition: all .4s cubic-bezier(.25,.46,.45,.94); display: block; position: absolute; left: 50%; transform: translateX(-50%); }
+        .hamburger span:nth-child(1) { top: 12px; }
+        .hamburger span:nth-child(2) { top: 19px; }
+        .hamburger span:nth-child(3) { top: 26px; }
+        .hamburger.active span:nth-child(1) { top: 19px; transform: translateX(-50%) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; transform: translateX(-50%) scaleX(0); }
+        .hamburger.active span:nth-child(3) { top: 19px; transform: translateX(-50%) rotate(-45deg); }
+
+        /* Mobile menu - fixed visibility toggle (no corner bleed) */
+        .mobile-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,10,10,0.98); backdrop-filter: blur(40px); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; visibility: hidden; opacity: 0; transition: opacity .4s ease, visibility .4s ease; }
+        .mobile-menu.active { visibility: visible; opacity: 1; }
+        .mobile-menu a { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: #fff; text-decoration: none; transition: all .35s ease; opacity: 0; transform: translateY(15px); }
+        .mobile-menu.active a { opacity: 1; transform: translateY(0); }
+        .mobile-menu a:hover { color: var(--gold); }
+        .mobile-menu.active a:nth-child(1) { transition-delay: .05s; }
+        .mobile-menu.active a:nth-child(2) { transition-delay: .10s; }
+        .mobile-menu.active a:nth-child(3) { transition-delay: .15s; }
+        .mobile-menu.active a:nth-child(4) { transition-delay: .20s; }
+        .mobile-menu.active a:nth-child(5) { transition-delay: .25s; }
+        .mobile-menu.active a:nth-child(6) { transition-delay: .30s; }
+        .mobile-menu.active a:nth-child(7) { transition-delay: .35s; }
+
+        /* ==============================
+           HERO SECTION
+           ============================== */
+        .hero { position: relative; width: 100%; height: 100vh; min-height: 600px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .hero-fallback { position: absolute; inset: 0; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%); }
+        .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.5s ease; }
+        .hero-video.loaded { opacity: 1; }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.5) 40%, rgba(10,10,10,0.75) 100%); }
+        .hero-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        .h-particle { position: absolute; width: 2px; height: 2px; background: var(--gold); border-radius: 50%; opacity: 0; animation: pFloat 10s infinite; }
+        @keyframes pFloat { 0%{opacity:0;transform:translateY(100vh)} 10%{opacity:.4} 90%{opacity:.4} 100%{opacity:0;transform:translateY(-10vh)} }
+        .hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 700px; background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 60%); animation: glow 6s ease-in-out infinite alternate; }
+        @keyframes glow { 0%{transform:translate(-50%,-50%) scale(1);opacity:.4} 100%{transform:translate(-50%,-50%) scale(1.3);opacity:1} }
+        .hero-content { position: relative; z-index: 10; text-align: center; max-width: 850px; padding: 0 25px; }
+        .hero-logo-wrap { margin: 0 auto 20px; opacity: 0; animation: fadeUp .8s ease .3s forwards; }
+        .hero-logo-img { width: 90px; height: 90px; object-fit: contain; margin: 0 auto; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 22px; border: 1px solid rgba(212,175,55,0.25); border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: .58rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); backdrop-filter: blur(10px); background: rgba(212,175,55,0.04); margin-bottom: 28px; opacity: 0; animation: fadeUp .8s ease .5s forwards; }
+        .badge-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; animation: blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+        .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem, 5.5vw, 4.8rem); font-weight: 700; line-height: 1.1; margin-bottom: 20px; opacity: 0; animation: fadeUp .8s ease .7s forwards; }
+        .gold-text { background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-sub { font-family: 'Cormorant Garamond', serif; font-size: clamp(1rem, 2vw, 1.35rem); font-weight: 300; color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 35px; font-style: italic; opacity: 0; animation: fadeUp .8s ease .9s forwards; }
+        .hero-btns { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; opacity: 0; animation: fadeUp .8s ease 1.1s forwards; }
+        .btn-gold { padding: 16px 40px; background: var(--gradient-gold); color: var(--black); font-family: 'Montserrat', sans-serif; font-size: .7rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; border: none; cursor: pointer; transition: all .4s; text-decoration: none; position: relative; overflow: hidden; }
+        .btn-gold::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left .5s; }
+        .btn-gold:hover::before { left: 100%; }
+        .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(212,175,55,0.35); }
+        .btn-outline { padding: 16px 40px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.25); font-family: 'Montserrat', sans-serif; font-size: .7rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; cursor: pointer; transition: all .4s; text-decoration: none; }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.04); transform: translateY(-3px); }
+        .scroll-indicator { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp .8s ease 1.4s forwards; }
+        .scroll-txt { font-family: 'Montserrat', sans-serif; font-size: .55rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+        .scroll-line { width: 1px; height: 35px; background: rgba(212,175,55,0.2); position: relative; overflow: hidden; }
+        .scroll-line::after { content: ''; position: absolute; top: -50%; width: 100%; height: 50%; background: var(--gold); animation: scrollD 2s infinite; }
+        @keyframes scrollD { 0%{top:-50%} 100%{top:100%} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(35px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ==============================
+           SECTION BASE STYLES
+           ============================== */
+        .section { padding: 110px 50px; position: relative; }
+        .section-header { text-align: center; margin-bottom: 70px; }
+        .section-label { display: inline-block; font-family: 'Montserrat', sans-serif; font-size: .6rem; font-weight: 600; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 700; line-height: 1.2; margin-bottom: 18px; }
+        .section-desc { font-size: .92rem; color: rgba(255,255,255,0.55); max-width: 580px; margin: 0 auto; line-height: 1.8; }
+        .gold-line { width: 50px; height: 2px; background: var(--gradient-gold); margin: 18px auto 0; }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all .7s ease; }
+        .reveal.vis { opacity: 1; transform: translateY(0); }
+        .reveal-l { opacity: 0; transform: translateX(-40px); transition: all .7s ease; }
+        .reveal-l.vis { opacity: 1; transform: translateX(0); }
+        .reveal-r { opacity: 0; transform: translateX(40px); transition: all .7s ease; }
+        .reveal-r.vis { opacity: 1; transform: translateX(0); }
+
+        /* ==============================
+           ABOUT SECTION
+           ============================== */
+        .about { background: var(--black-light); }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; max-width: 1100px; margin: 0 auto; }
+        .about-visual { position: relative; }
+        .about-img-box { width: 100%; height: 520px; border: 1px solid rgba(212,175,55,0.1); position: relative; overflow: hidden; }
+        .about-img-box::before { content: ''; position: absolute; top: -15px; right: -15px; width: 100%; height: 100%; border: 1px solid rgba(212,175,55,0.15); z-index: -1; }
+        .about-owner-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .about-badge { position: absolute; bottom: -15px; right: -15px; width: 120px; height: 120px; background: var(--gradient-gold); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
+        .about-badge-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--black); }
+        .about-badge-txt { font-family: 'Montserrat', sans-serif; font-size: .5rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--black); }
+        .about-content h3 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; margin-bottom: 18px; line-height: 1.3; }
+        .about-content p { font-size: .88rem; color: rgba(255,255,255,0.55); line-height: 1.9; margin-bottom: 28px; }
+        .about-features { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .about-feat { display: flex; align-items: center; gap: 10px; padding: 14px; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.08); transition: all .3s; }
+        .about-feat:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.03); }
+        .about-feat i { color: var(--gold); font-size: .85rem; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(212,175,55,0.08); flex-shrink: 0; }
+        .about-feat span { font-family: 'Montserrat', sans-serif; font-size: .75rem; font-weight: 500; color: rgba(255,255,255,0.8); }
+
+        /* ==============================
+           SERVICES SECTION
+           ============================== */
+        .services { background: var(--black); }
+
+        /* Category filter buttons */
+        .svc-cats { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+        .svc-cat-btn { padding: 9px 22px; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); font-family: 'Montserrat', sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .3s; }
+        .svc-cat-btn:hover, .svc-cat-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.04); }
+
+        /* Service cards grid */
+        .svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; max-width: 1300px; margin: 0 auto; }
+
+        /* Individual service card */
+        .svc-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.06); text-align: center; cursor: pointer; transition: all .4s; position: relative; overflow: hidden; backdrop-filter: blur(8px); }
+        .svc-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gradient-gold); transform: scaleX(0); transition: transform .4s; }
+        .svc-card:hover::before { transform: scaleX(1); }
+        .svc-card:hover { border-color: rgba(212,175,55,0.18); transform: translateY(-6px); box-shadow: 0 15px 45px rgba(0,0,0,0.3); }
+        .svc-card-img { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid rgba(212,175,55,0.08); }
+        .svc-card-body { padding: 25px 20px; }
+        .svc-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+        .svc-price { font-family: 'Montserrat', sans-serif; font-size: .85rem; color: var(--gold); font-weight: 600; margin-bottom: 14px; }
+        .svc-actions { display: flex; gap: 8px; justify-content: center; }
+        .svc-btn { padding: 7px 16px; font-family: 'Montserrat', sans-serif; font-size: .6rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .3s; border: 1px solid rgba(212,175,55,0.3); background: transparent; color: var(--gold); }
+        .svc-btn:hover { background: var(--gold); color: var(--black); }
+        .svc-btn.cart-add { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+        .svc-btn.cart-add:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ==============================
+           FIX 1 — SHOW MORE / SHOW LESS BUTTON
+           Smooth expand/collapse of service cards
+           ============================== */
+        .show-more-wrap { text-align: center; margin-top: 35px; }
+
+        .show-more-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 40px;
+            border: 1px solid rgba(212,175,55,0.3);
+            background: transparent; color: var(--gold);
+            font-family: 'Montserrat', sans-serif; font-size: .7rem;
+            font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; transition: all .35s ease;
+        }
+        .show-more-btn:hover { background: var(--gold); color: var(--black); }
+        .show-more-btn .sm-icon {
+            transition: transform .35s ease;
+            font-size: .75rem;
+        }
+        /* Rotate arrow when expanded */
+        .show-more-btn.expanded .sm-icon { transform: rotate(180deg); }
+
+        /* Cards that are hidden initially — smooth fade-in/out */
+        .svc-card.svc-hidden {
+            display: none; /* hidden by JS; JS toggles to flex then animates */
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+        /* ==============================
+           FIX 2 — SERVICE POPUP MODAL
+           Opens on card click, no page refresh
+           ============================== */
+        .svc-popup-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(14px);
+            z-index: 99998; /* just below lightbox */
+            display: flex; align-items: center; justify-content: center;
+            /* Hidden by default */
+            visibility: hidden; opacity: 0;
+            transition: opacity .35s ease, visibility .35s ease;
+        }
+        .svc-popup-overlay.popup-open { visibility: visible; opacity: 1; }
 
-        .accent-text { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
-
-        .section-title {
-            text-align: center;
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 3vw, 3.5rem);
-            margin-bottom: 60px;
-            color: var(--text-main);
+        .svc-popup {
+            background: rgba(17,17,17,0.97);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(212,175,55,0.14);
+            width: 90%; max-width: 460px;
+            max-height: 90vh; overflow-y: auto;
             position: relative;
-            letter-spacing: 2px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.9) translateY(24px);
+            transition: transform .35s cubic-bezier(.25,.46,.45,.94);
         }
+        .svc-popup::-webkit-scrollbar { width: 3px; }
+        .svc-popup::-webkit-scrollbar-thumb { background: var(--gold-dark); }
+        .svc-popup-overlay.popup-open .svc-popup { transform: scale(1) translateY(0); }
 
-        .section-title.visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* Close button */
+        .svc-popup-close {
+            position: absolute; top: 12px; right: 12px;
+            width: 34px; height: 34px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: none; color: #fff;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .85rem;
+            transition: all .25s ease; z-index: 2;
+            border-radius: 50%;
         }
+        .svc-popup-close:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.08); }
 
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 3px;
-            background: var(--accent);
-            margin: 20px auto 0;
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
+        .svc-popup-img { width: 100%; height: 210px; object-fit: cover; display: block; }
+        .svc-popup-body { padding: 28px; }
+        .svc-popup-cat { font-family: 'Montserrat', sans-serif; font-size: .55rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+        .svc-popup-name { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; margin-bottom: 10px; }
+        .svc-popup-price { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--gold); font-weight: 700; margin-bottom: 14px; }
+        .svc-popup-desc { font-size: .83rem; color: rgba(255,255,255,0.55); line-height: 1.7; margin-bottom: 24px; }
+        .svc-popup-actions { display: flex; gap: 12px; }
+        .svc-popup-actions .btn-gold, .svc-popup-actions .btn-outline { flex: 1; text-align: center; padding: 13px 16px; font-size: .65rem; }
 
-        header {
-            position: fixed;
-            top: 0;
+        /* ==============================
+           WHY CHOOSE US — MARQUEE
+           ============================== */
+        .why-section { background: var(--black-light); overflow: hidden; }
+        .marquee-wrap { overflow: hidden; padding: 20px 0; }
+        .marquee-track { display: flex; gap: 25px; width: max-content; animation: marquee 40s linear infinite; }
+        .marquee-track:hover { animation-play-state: paused; }
+        @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+        .why-card { flex-shrink: 0; width: 280px; padding: 35px 25px; text-align: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.06); backdrop-filter: blur(8px); transition: all .3s; }
+        .why-card:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.03); transform: translateY(-4px); }
+        .why-card i { font-size: 1.8rem; color: var(--gold); margin-bottom: 15px; display: block; }
+        .why-card h4 { font-family: 'Playfair Display', serif; font-size: .95rem; margin-bottom: 8px; }
+        .why-card p { font-size: .72rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+        /* ==============================
+           COUNTERS MARQUEE
+           ============================== */
+        .counters-section { border-top: 1px solid rgba(212,175,55,0.08); border-bottom: 1px solid rgba(212,175,55,0.08); overflow: hidden; padding: 0; }
+        .counter-marquee { overflow: hidden; padding: 35px 0; }
+        .counter-track { display: flex; gap: 60px; width: max-content; animation: marquee 30s linear infinite; }
+        .counter-item { flex-shrink: 0; min-width: 180px; display: flex; align-items: center; gap: 15px; }
+        .counter-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; color: var(--gold); white-space: nowrap; }
+        .counter-label { font-family: 'Montserrat', sans-serif; font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); text-align: left; }
+        .counter-dot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; opacity: .3; flex-shrink: 0; }
+
+        /* ==============================
+           GALLERY SECTION
+           ============================== */
+        .gallery { background: var(--black); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(4,1fr); grid-auto-rows: 280px; gap: 12px; max-width: 1300px; margin: 0 auto; }
+        .gallery-item { position: relative; overflow: hidden; cursor: pointer; border: 1px solid rgba(212,175,55,0.06); }
+        .gallery-item:nth-child(1) { grid-row: span 2; }
+        .gallery-item:nth-child(4) { grid-column: span 2; }
+        .gallery-item:nth-child(7) { grid-row: span 2; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; display: block; }
+        .gallery-item:hover img { transform: scale(1.08); }
+        .gallery-ov { position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: opacity .3s; }
+        .gallery-item:hover .gallery-ov { opacity: 1; }
+        .gallery-ov h4 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 3px; }
+        .gallery-ov span { font-size: .7rem; color: var(--gold); }
+        .gallery-expand { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.5); width: 45px; height: 45px; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold); opacity: 0; transition: all .3s; }
+        .gallery-item:hover .gallery-expand { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+        .gallery-mobile-carousel { display: none; }
+
+        /* ==============================
+           LIGHTBOX
+           ============================== */
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity .3s; }
+        .lightbox.show { display: flex; opacity: 1; }
+        .lb-close { position: absolute; top: 25px; right: 25px; width: 45px; height: 45px; border: 1px solid rgba(255,255,255,0.15); background: none; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .3s; z-index: 2; }
+        .lb-close:hover { border-color: var(--gold); color: var(--gold); }
+        .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 45px; height: 45px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .3s; font-size: 1rem; z-index: 2; }
+        .lb-nav:hover { border-color: var(--gold); color: var(--gold); }
+        .lb-prev { left: 20px; } .lb-next { right: 20px; }
+        .lb-img-container { max-width: 85vw; max-height: 80vh; display: flex; align-items: center; justify-content: center; }
+        .lb-img-container img { max-width: 100%; max-height: 80vh; object-fit: contain; border: 1px solid rgba(212,175,55,0.15); }
+
+        /* ==============================
+           REVIEWS SECTION
+           ============================== */
+        .reviews { background: var(--black-light); overflow: hidden; }
+        .review-rating { text-align: center; margin-bottom: 45px; }
+        .rating-big { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 700; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .rating-stars { font-size: 1.3rem; color: var(--gold); letter-spacing: 4px; margin: 8px 0; }
+        .rating-txt { font-size: .75rem; color: rgba(255,255,255,0.4); letter-spacing: 2px; }
+        .review-marquee { overflow: hidden; }
+        .review-track { display: flex; gap: 25px; width: max-content; animation: marquee 50s linear infinite; }
+        .review-track:hover { animation-play-state: paused; }
+        .review-card { flex-shrink: 0; width: 350px; padding: 35px; position: relative; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.06); backdrop-filter: blur(8px); transition: all .3s; }
+        .review-card:hover { border-color: rgba(212,175,55,0.15); transform: translateY(-3px); }
+        .review-quote { position: absolute; top: 15px; right: 20px; font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--gold); opacity: .1; }
+        .review-stars { color: var(--gold); font-size: .7rem; letter-spacing: 2px; margin-bottom: 15px; }
+        .review-text { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-style: italic; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 22px; }
+        .review-author { display: flex; align-items: center; gap: 12px; padding-top: 15px; border-top: 1px solid rgba(212,175,55,0.08); }
+        .review-avatar { width: 42px; height: 42px; background: var(--gradient-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: .9rem; font-weight: 700; color: var(--black); flex-shrink: 0; }
+        .review-info h4 { font-family: 'Playfair Display', serif; font-size: .9rem; }
+        .review-info span { font-size: .65rem; color: var(--gold); }
+
+        /* ==============================
+           BOOKING SECTION
+           ============================== */
+        .booking { background: var(--black); }
+        .booking-box { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.02); border: 1px solid rgba(212,175,55,0.08); padding: 50px; backdrop-filter: blur(15px); }
+        .booking-cart-summary { margin-bottom: 25px; padding: 18px; background: rgba(212,175,55,0.03); border: 1px solid rgba(212,175,55,0.1); display: none; }
+        .booking-cart-summary.has-items { display: block; }
+        .booking-cart-summary h4 { font-family: 'Playfair Display', serif; font-size: .95rem; margin-bottom: 8px; color: var(--gold); }
+        .booking-cart-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .booking-cart-tag { padding: 5px 12px; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.15); font-size: .68rem; color: var(--gold); display: flex; align-items: center; gap: 6px; }
+        .booking-cart-tag button { background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-size: .55rem; transition: color .2s; }
+        .booking-cart-tag button:hover { color: #ff4444; }
+        .bk-total { font-size: .82rem; color: rgba(255,255,255,0.5); }
+        .bk-total b { color: var(--gold); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group.full { grid-column: span 2; }
+        .form-label { font-family: 'Montserrat', sans-serif; font-size: .62rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-family: 'Inter', sans-serif; font-size: .84rem; outline: none; transition: all .3s; border-radius: 0; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); background: rgba(212,175,55,0.02); box-shadow: 0 0 12px rgba(212,175,55,0.06); }
+        .form-select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23D4AF37' d='M5 7L0 2h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+        .form-select option { background: var(--black-light); color: #fff; }
+        .form-textarea { resize: vertical; min-height: 80px; }
+        .form-submit { grid-column: span 2; text-align: center; margin-top: 12px; }
+        .form-submit .btn-gold { width: 100%; padding: 17px; }
+        .svc-select-note { font-size: .65rem; color: rgba(255,255,255,0.3); font-style: italic; margin-top: 3px; }
+
+        /* ==============================
+           FIX 3 — TIME SLOTS (Improved UI)
+           Clean, premium grid layout with clear selected state
+           ============================== */
+        .time-slots {
+            display: grid;
+            /* 4 columns on desktop, auto-fill on smaller screens */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
             width: 100%;
-            padding: 20px 0;
-            background: rgba(8, 8, 8, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(220, 38, 38, 0.3);
-            transition: padding 0.3s ease;
+            margin-top: 4px;
         }
 
-        header.scrolled {
-            padding: 15px 0;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        /* Individual time slot button */
+        .time-slot {
+            padding: 10px 6px;
+            border: 1px solid rgba(212,175,55,0.18);
+            background: rgba(255,255,255,0.02);
+            color: rgba(255,255,255,0.55);
+            font-family: 'Montserrat', sans-serif;
+            font-size: .62rem;
+            font-weight: 500;
+            letter-spacing: .3px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s ease;
+            white-space: nowrap;
+            user-select: none;
         }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Hover state */
+        .time-slot:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212,175,55,0.06);
         }
 
-        .logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            color: var(--accent);
-            text-decoration: none;
-            letter-spacing: 1px;
+        /* Selected / active state — clearly highlighted */
+        .time-slot.sel {
+            background: var(--gradient-gold);
+            border-color: var(--gold);
+            color: var(--black);
             font-weight: 700;
-            text-shadow: 0 0 15px var(--accent-glow);
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .nav-links { display: flex; gap: 40px; list-style: none; }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            position: relative;
-            padding-bottom: 5px;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--accent);
-            text-shadow: 0 0 8px var(--accent-glow);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0; height: 1px;
-            bottom: 0; left: 0;
-            background: var(--accent);
-            transition: width 0.3s ease;
-            box-shadow: 0 0 5px var(--accent);
-        }
-
-        .nav-links a:hover::after { width: 100%; }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--accent);
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 1001;
-            transition: transform 0.3s ease;
-        }
-
-        .menu-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            padding-top: 80px;
-        }
-
-        .hero-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            flex-wrap: wrap-reverse;
-            gap: 40px;
-        }
-
-        .hero-content {
-            flex: 1;
-            min-width: 300px;
-            position: relative;
-            z-index: 2;
-            opacity: 0;
-            animation: fadeUpIn 1s ease forwards 0.3s;
-        }
-
-        .hero-greeting {
-            color: var(--accent);
-            font-family: var(--font-display);
-            letter-spacing: 4px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            display: block;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px var(--accent-glow);
-            opacity: 0;
-            animation: fadeUpIn 0.8s ease forwards 0.5s;
-        }
-
-        .hero-name {
-            font-family: var(--font-serif);
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            line-height: 1.1;
-            margin-bottom: 20px;
-            color: var(--text-main);
-            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
-            opacity: 0;
-            animation: fadeUpIn 0.8s ease forwards 0.7s;
-        }
-
-        .hero-role {
-            font-size: clamp(1.1rem, 2vw, 1.5rem);
-            color: var(--text-muted);
-            font-style: italic;
-            margin-bottom: 40px;
-            border-left: 3px solid var(--accent);
-            padding-left: 20px;
-            box-shadow: -5px 0 10px rgba(220, 38, 38, 0.1);
-            opacity: 0;
-            animation: fadeUpIn 0.8s ease forwards 0.9s;
-        }
-
-        .hero-btns {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            opacity: 0;
-            animation: fadeUpIn 0.8s ease forwards 1.1s;
-        }
-
-        .btn {
-            padding: 15px 40px;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            text-decoration: none;
-            text-transform: uppercase;
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            background: transparent;
-            box-shadow: 0 0 0 rgba(220, 38, 38, 0);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-fill {
-            background: var(--accent);
-            color: var(--bg-deep);
-            font-weight: 700;
-        }
-
-        .btn:hover {
-            background: rgba(220, 38, 38, 0.1);
-            box-shadow: 0 0 25px var(--accent-glow);
-            transform: translateY(-3px);
-        }
-
-        .btn-fill:hover {
-            background: #b91c1c;
-            color: #fff;
-        }
-
-        .hero-visual {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-width: 300px;
-            position: relative;
-        }
-
-        .royal-frame {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            animation: scaleIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s;
-        }
-
-        .ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(220, 38, 38, 0.3);
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.1);
-        }
-        .ring-1 {
-            width: 100%;
-            height: 100%;
-            border: 2px double var(--accent);
-            animation: spin 20s linear infinite;
-        }
-        .ring-2 {
-            width: 85%;
-            height: 85%;
-            border: 1px solid var(--accent-dim);
-            animation: spin 15s linear infinite reverse;
-        }
-
-        .profile-img {
-            width: 80%;
-            height: 80%;
-            object-fit: cover;
-            border-radius: 50%;
-            filter: grayscale(100%) contrast(1.1);
-            position: relative;
-            z-index: 2;
-            transition: all 0.5s ease;
-            box-shadow: 0 0 0 rgba(0,0,0,0);
-        }
-
-        .royal-frame:hover .profile-img {
-            filter: grayscale(0%);
-            box-shadow: 0 0 40px var(--accent-glow);
-            transform: scale(1.05);
-        }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes scaleIn {
-            0% { opacity: 0; transform: scale(0.8) rotate(-10deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
-
-        @keyframes fadeUpIn {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        section {
-            padding: 100px 0;
-            border-top: 1px solid rgba(255,255,255,0.02);
-            position: relative;
-        }
-
-        .about-split {
-            display: grid;
-            grid-template-columns: 1fr 1px 1fr;
-            gap: 60px;
-            align-items: center;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .about-split.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .divider {
-            height: 200px;
-            background: linear-gradient(to bottom, transparent, var(--accent), transparent);
-            width: 2px;
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .about-text h3 {
-            font-family: var(--font-display);
-            color: var(--accent);
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .about-text p {
-            margin-bottom: 20px;
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .stat-box {
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 30px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--bg-card);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-box::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .stat-box:hover::before {
-            opacity: 1;
-        }
-
-        .stat-box:hover {
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transform: translateY(-5px);
-        }
-
-        .stat-num {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            color: var(--accent);
-            display: block;
-            margin-bottom: 5px;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .skills-grid.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .skill-card {
-            background: var(--bg-card);
-            border: 1px solid #222;
-            padding: 40px 20px;
-            text-align: center;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .skill-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 0; height: 2px;
-            background: var(--accent);
-            transition: width 0.4s ease;
-            box-shadow: 0 0 10px var(--accent);
-        }
-
-        .skill-card:hover {
-            background: #151515;
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-        }
-
-        .skill-card:hover::before { width: 100%; }
-
-        .skill-icon {
-            font-size: 2.5rem;
-            color: var(--accent-dim);
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .skill-card:hover .skill-icon {
-            color: var(--accent);
-            text-shadow: 0 0 15px var(--accent-glow);
-            transform: scale(1.1) rotateY(360deg);
-        }
-
-        .skill-panel {
-            position: fixed;
-            top: 0; right: -600px;
-            width: 90%;
-            max-width: 450px;
-            height: 100vh;
-            background: #080808;
-            border-left: 2px solid var(--accent);
-            z-index: 2000;
-            padding: 50px 30px;
-            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
-            box-shadow: -10px 0 50px rgba(0,0,0,0.8);
-        }
-
-        .skill-panel.active { right: 0; }
-
-        .close-panel {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: none;
-            border: 1px solid #444;
-            color: #aaa;
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-panel:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: rotate(90deg);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .skill-bar-wrap { margin-bottom: 20px; }
-        .skill-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-family: var(--font-display);
-            font-size: 0.9rem;
-        }
-        .bar-bg { width: 100%; height: 6px; background: #222; border-radius: 3px; }
-        .bar-fill {
-            height: 100%;
-            background: var(--accent);
-            width: 0;
-            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px var(--accent-glow);
-            border-radius: 3px;
-        }
-
-        /* --- CERTIFICATE SECTION FIX START --- */
-        .cert-container {
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .cert-container.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .cert-category {
-            margin-bottom: 40px;
-        }
-
-        .cert-category-title {
-            color: var(--accent);
-            font-family: var(--font-display);
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            text-shadow: 0 0 5px var(--accent-glow);
-        }
-
-        .cert-slider {
-            position: relative;
-            padding: 20px 0;
-            /* Removed overflow: hidden so track can handle scrolling */
-        }
-
-        .cert-track {
-            display: flex;
-            gap: 20px;
-            padding: 0 10px;
-            
-            /* ENABLES SWIPING/SCROLLING */
-            overflow-x: auto; 
-            scroll-behavior: smooth;
-            scroll-snap-type: x mandatory; /* Snaps to items */
-            -webkit-overflow-scrolling: touch; /* Smooth swipe on iOS */
-            
-            /* Hide scrollbar for cleaner look */
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none;  /* IE and Edge */
-        }
-
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .cert-track::-webkit-scrollbar {
-            display: none;
-        }
-
-        .cert-item {
-            background: var(--bg-card);
-            border: 1px solid #222;
-            padding: 20px;
-            min-width: 300px;
-            flex-shrink: 0; /* Prevents items from shrinking */
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-            scroll-snap-align: start; /* Snaps the start of the item to the left */
-        }
-
-        .cert-item:hover {
-            border-color: var(--accent);
-            background: #0f0f0f;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transform: translateY(-3px);
-        }
-        /* --- CERTIFICATE SECTION FIX END --- */
-
-        .cert-icon {
-            color: var(--accent);
-            font-size: 1.5rem;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .cert-title {
-            font-weight: 700;
-            color: var(--text-main);
-            font-size: 1rem;
-        }
-
-        .cert-cat {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .view-btn {
-            margin-left: auto;
-            background: transparent;
-            border: 1px solid #444;
-            color: #aaa;
-            padding: 8px 15px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-        }
-
-        .view-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(220, 38, 38, 0.1);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .slider-controls {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .slider-arrow {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .slider-arrow:hover {
-            background: var(--accent);
-            color: var(--bg-deep);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .slider-arrow:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 50%; top: 0; bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, var(--accent), transparent);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .timeline-item {
-            width: 50%;
-            position: relative;
-            padding: 0 40px;
-            margin-bottom: 50px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .timeline-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .timeline-item:nth-child(odd) { left: 0; text-align: right; }
-        .timeline-item:nth-child(even) { left: 50%; text-align: left; }
-
-        .timeline-dot {
-            position: absolute;
-            width: 16px; height: 16px;
-            background: var(--bg-deep);
-            border: 3px solid var(--accent);
-            border-radius: 50%;
-            top: 0; z-index: 2;
-            box-shadow: 0 0 15px var(--accent-glow);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .timeline-item:nth-child(odd) .timeline-dot { right: -9px; }
-        .timeline-item:nth-child(even) .timeline-dot { left: -9px; }
-
-        .year {
-            color: var(--accent);
-            font-family: var(--font-display);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            display: block;
-            text-shadow: 0 0 5px var(--accent-glow);
-        }
-
-        .project-gallery {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .project-gallery.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slider-track {
-            display: flex;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide {
-            min-width: 100%;
-            padding: 10px;
-            opacity: 0.4;
-            transform: scale(0.95);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .slide.active { opacity: 1; transform: scale(1); }
-
-        .project-card {
-            background: #0a0a0a;
-            border: 1px solid #222;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .card-header {
-            position: relative;
-            height: 350px;
-            overflow: hidden;
-            border-bottom: 2px solid var(--accent);
-        }
-
-        .card-header img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: sepia(30%) contrast(1.1);
-        }
-
-        .project-card:hover .card-header img {
-            transform: scale(1.1);
-            filter: sepia(0%);
-        }
-
-        .card-body { padding: 40px; text-align: center; position: relative; }
-
-        .stamp {
-            position: absolute;
-            top: 20px; right: 20px;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 5px 10px;
-            font-family: var(--font-display);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transform: rotate(15deg);
-            opacity: 0.8;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        .card-title {
-            font-family: var(--font-serif);
-            font-size: 2rem;
-            color: var(--accent);
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .card-desc {
-            color: #aaa;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
-        }
-
-        .slider-nav {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .nav-arrow {
-            background: none;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            box-shadow: 0 0 10px rgba(220, 38, 38, 0.2);
-        }
-
-        .nav-arrow:hover {
-            background: var(--accent);
-            color: var(--bg-deep);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .contact-split {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            border: 1px solid #222;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .contact-split.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .contact-info {
-            padding: 60px;
-            background: #0a0a0a;
-            border-right: 1px solid #222;
-        }
-
-        .contact-form {
-            padding: 60px;
-            background: #080808;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            transition: transform 0.3s ease;
-        }
-
-        .info-row:hover {
-            transform: translateX(10px);
-        }
-
-        .info-icon {
-            width: 40px; height: 40px;
-            border: 1px solid var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-            transition: all 0.3s ease;
-        }
-
-        .info-row:hover .info-icon {
-            background: var(--accent);
-            color: var(--bg-deep);
-            transform: rotate(360deg);
-        }
-
-        .input-group { position: relative; margin-bottom: 30px; }
-
-        .input-field {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #333;
-            padding: 10px 0;
-            color: #fff;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-bottom-color: var(--accent);
-            box-shadow: 0 10px 10px -10px rgba(220, 38, 38, 0.1);
-        }
-
-        .input-label {
-            position: absolute;
-            top: 10px; left: 0;
-            color: #666;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .input-field:focus ~ .input-label,
-        .input-field:valid ~ .input-label {
-            top: -15px;
-            font-size: 0.8rem;
-            color: var(--accent);
-            text-shadow: 0 0 5px var(--accent-glow);
-        }
-
-        .modal {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 5000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal.open {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-content {
-            max-width: 90%;
-            max-height: 90vh;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 50px var(--accent-glow);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 30px; right: 30px;
-            color: #fff;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: var(--accent);
-            transform: rotate(90deg) scale(1.2);
-            text-shadow: 0 0 10px #fff;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px;
-            border-top: 1px solid #222;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @media (max-width: 992px) {
-            .about-split, .contact-split {
-                grid-template-columns: 1fr;
-            }
-            .divider { display: none; }
-            .contact-info {
-                border-right: none;
-                border-bottom: 1px solid #222;
-            }
-            .royal-frame {
-                width: 300px;
-                height: 300px;
-            }
-        }
-
+            box-shadow: 0 3px 14px rgba(212,175,55,0.28);
+        }
+
+        /* ==============================
+           CART SIDEBAR
+           ============================== */
+        .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99997; display: none; opacity: 0; transition: opacity .3s; }
+        .cart-overlay.show { display: block; opacity: 1; }
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 380px; max-width: 92vw; height: 100vh; background: rgba(12,12,12,0.98); backdrop-filter: blur(20px); border-left: 1px solid rgba(212,175,55,0.1); z-index: 99998; transition: right .4s ease; display: flex; flex-direction: column; }
+        .cart-sidebar.open { right: 0; }
+        .cart-header { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; }
+        .cart-header h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; }
+        .cart-close { background: none; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 15px 25px; }
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .cart-item-info h4 { font-size: .82rem; margin-bottom: 3px; }
+        .cart-item-info span { font-size: .68rem; color: var(--gold); }
+        .cart-item-remove { background: none; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: .55rem; transition: all .3s; }
+        .cart-item-remove:hover { border-color: #ff4444; color: #ff4444; }
+        .cart-empty { text-align: center; padding: 50px 20px; color: rgba(255,255,255,0.25); font-size: .82rem; }
+        .cart-empty i { font-size: 2.5rem; margin-bottom: 12px; opacity: .3; display: block; }
+        .cart-footer { padding: 20px 25px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .cart-total { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: .88rem; }
+        .cart-total span:last-child { color: var(--gold); font-weight: 600; font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+        .cart-checkout { width: 100%; }
+
+        /* ==============================
+           SUCCESS POPUP
+           ============================== */
+        .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); z-index: 99999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity .35s; }
+        .success-overlay.show { display: flex; opacity: 1; }
+        .success-box { background: var(--black-light); border: 1px solid rgba(212,175,55,0.15); max-width: 480px; width: 90%; padding: 50px 40px; text-align: center; transform: scale(0.85); transition: transform .4s; }
+        .success-overlay.show .success-box { transform: scale(1); }
+        .success-icon { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; background: rgba(0,200,83,0.1); border: 2px solid rgba(0,200,83,0.3); display: flex; align-items: center; justify-content: center; animation: successPulse .6s ease; }
+        .success-icon i { font-size: 2rem; color: #00c853; }
+        @keyframes successPulse { 0%{transform:scale(0)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
+        .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 8px; }
+        .success-box .s-id { font-family: 'Montserrat', sans-serif; font-size: .7rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 15px; }
+        .success-box .s-summary { text-align: left; padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 18px; font-size: .78rem; color: rgba(255,255,255,0.55); line-height: 1.7; }
+        .success-box .s-summary strong { color: var(--gold); }
+        .success-box .s-msg { font-size: .8rem; color: rgba(255,255,255,0.45); margin-bottom: 22px; line-height: 1.6; }
+
+        /* ==============================
+           CONTACT SECTION
+           ============================== */
+        .contact { background: var(--black-light); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; max-width: 1100px; margin: 0 auto; }
+        .contact-cards { display: flex; flex-direction: column; gap: 20px; }
+        .contact-card { display: flex; align-items: flex-start; gap: 18px; padding: 25px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); transition: all .3s; }
+        .contact-card:hover { border-color: rgba(212,175,55,0.12); background: rgba(212,175,55,0.02); }
+        .cc-icon { width: 44px; height: 44px; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.15); display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; }
+        .contact-card h4 { font-family: 'Playfair Display', serif; font-size: .9rem; margin-bottom: 4px; }
+        .contact-card p, .contact-card a { font-size: .8rem; color: rgba(255,255,255,0.55); text-decoration: none; line-height: 1.6; transition: color .3s; }
+        .contact-card a:hover { color: var(--gold); }
+        .social-links { display: flex; gap: 12px; margin-top: 8px; }
+        .soc-link { width: 40px; height: 40px; border: 1px solid rgba(212,175,55,0.15); display: flex; align-items: center; justify-content: center; color: var(--gold); text-decoration: none; transition: all .3s; }
+        .soc-link:hover { background: var(--gold); color: var(--black); transform: translateY(-2px); }
+        .contact-map { width: 100%; height: 100%; min-height: 380px; border: 1px solid rgba(212,175,55,0.08); overflow: hidden; }
+        .contact-map iframe { width: 100%; height: 100%; border: 0; filter: grayscale(80%) invert(92%) contrast(83%); }
+
+        /* ==============================
+           FOOTER
+           ============================== */
+        .footer { background: var(--black); padding: 70px 50px 25px; border-top: 1px solid rgba(212,175,55,0.08); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; max-width: 1100px; margin: 0 auto 50px; }
+        .footer-logo-img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 10px; }
+        .footer-brand-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        .footer-brand-sub { font-size: .6rem; color: var(--gold); margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; }
+        .footer-brand p { font-size: .78rem; color: rgba(255,255,255,0.45); line-height: 1.8; margin-bottom: 15px; }
+        .footer h4 { font-family: 'Playfair Display', serif; font-size: .9rem; font-weight: 600; margin-bottom: 20px; position: relative; padding-bottom: 8px; }
+        .footer h4::after { content: ''; position: absolute; bottom: 0; left: 0; width: 25px; height: 2px; background: var(--gold); }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .footer-links a { font-size: .75rem; color: rgba(255,255,255,0.45); text-decoration: none; display: flex; align-items: center; gap: 6px; transition: all .3s; }
+        .footer-links a:hover { color: var(--gold); transform: translateX(4px); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.04); padding-top: 25px; display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; flex-wrap: wrap; gap: 10px; }
+        .footer-copy { font-size: .68rem; color: rgba(255,255,255,0.35); }
+
+        /* ==============================
+           FLOATING ACTION BUTTONS
+           ============================== */
+        .float-btns { position: fixed; bottom: 25px; right: 25px; z-index: 9998; display: flex; flex-direction: column; gap: 10px; }
+        .float-btn { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all .3s; text-decoration: none; border: none; }
+        .wa-btn { background: #25D366; color: #fff; box-shadow: 0 4px 20px rgba(37,211,102,0.3); animation: waPulse 2s infinite; }
+        @keyframes waPulse { 0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.3)} 50%{box-shadow:0 4px 20px rgba(37,211,102,0.5),0 0 0 8px rgba(37,211,102,0.08)} }
+        .wa-btn:hover { transform: scale(1.08); }
+        .top-btn, .bottom-btn { background: rgba(10,10,10,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(212,175,55,0.2) !important; color: var(--gold); opacity: 0; visibility: hidden; transform: translateY(10px); transition: all .3s; }
+        .top-btn.vis, .bottom-btn.vis { opacity: 1; visibility: visible; transform: translateY(0); }
+        .top-btn:hover, .bottom-btn:hover { background: var(--gold); color: var(--black); }
+
+        /* ==============================
+           RESPONSIVE — TABLET
+           ============================== */
+        @media (max-width: 1024px) {
+            .section { padding: 75px 30px; }
+            .navbar { padding: 12px 20px; }
+            .navbar.scrolled { padding: 8px 20px; }
+            .nav-menu { display: none; }
+            .hamburger { display: flex; }
+            .nav-book-btn { display: none; }
+            .nav-logo-img { width: 36px; height: 36px; }
+            .nav-brand-name { font-size: 1rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 40px; }
+            .about-img-box { height: 400px; }
+            .gallery-grid { grid-template-columns: repeat(2,1fr); grid-auto-rows: 220px; }
+            .gallery-item:nth-child(1) { grid-row: span 1; }
+            .gallery-item:nth-child(4) { grid-column: span 1; }
+            .gallery-item:nth-child(7) { grid-row: span 1; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            /* Time slots: 3 per row on tablet */
+            .time-slots { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        /* ==============================
+           RESPONSIVE — MOBILE
+           ============================== */
         @media (max-width: 768px) {
-            section { padding: 60px 0; }
+            .section { padding: 55px 16px; }
+            .section-header { margin-bottom: 40px; }
+            .section-title { font-size: clamp(1.6rem, 6.5vw, 2.4rem) !important; line-height: 1.25; }
+            .section-label { font-size: .55rem; letter-spacing: 3.5px; }
+            .section-desc { font-size: .82rem; }
+            .navbar { padding: 10px 14px; }
+            .navbar.scrolled { padding: 8px 14px; }
+            .nav-logo-img { width: 32px; height: 32px; }
+            .nav-brand-name { font-size: .88rem; }
+            .nav-brand-sub { font-size: .42rem; }
+            .nav-cart-btn { width: 34px; height: 34px; font-size: .8rem; }
+            .nav-right { gap: 10px; }
+            .mobile-menu { gap: 18px; }
+            .mobile-menu a { font-size: 1.3rem; }
+            .hero { min-height: 100svh; }
+            .hero-content { padding: 0 16px; }
+            .hero-logo-img { width: 65px; height: 65px; }
+            .hero-badge { font-size: .5rem; padding: 6px 14px; margin-bottom: 20px; }
+            .hero-title { font-size: clamp(1.8rem, 8vw, 2.6rem) !important; margin-bottom: 14px; }
+            .hero-sub { font-size: .92rem; margin-bottom: 25px; }
+            .hero-btns { flex-direction: column; gap: 12px; }
+            .btn-gold, .btn-outline { width: 100%; text-align: center; padding: 14px 30px; font-size: .65rem; }
+            .about-content h3 { font-size: 1.55rem !important; }
+            .about-content p { font-size: .82rem; margin-bottom: 20px; }
+            .about-features { grid-template-columns: 1fr; }
+            .about-img-box { height: 320px; }
+            .about-badge { width: 90px; height: 90px; bottom: -10px; right: -10px; }
+            .about-badge-num { font-size: 1.5rem; }
 
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 70px; left: 0; width: 100%;
-                background: #000;
-                flex-direction: column;
-                padding: 40px;
-                text-align: center;
-                border-bottom: 2px solid var(--accent);
-                gap: 30px;
-            }
+            /* Services: horizontal swipe on mobile */
+            .svc-cats { gap: 6px; margin-bottom: 25px; justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .svc-cats::-webkit-scrollbar { display: none; }
+            .svc-cat-btn { padding: 7px 16px; font-size: .58rem; white-space: nowrap; flex-shrink: 0; }
+            .svc-grid { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; gap: 14px; padding-bottom: 15px; scrollbar-width: none; }
+            .svc-grid::-webkit-scrollbar { display: none; }
+            .svc-grid .svc-card { min-width: 260px; max-width: 280px; flex-shrink: 0; scroll-snap-align: center; transform: none !important; }
+            .svc-grid .svc-card:hover { transform: none !important; box-shadow: none; }
 
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; }
-            .nav-links a {
-                display: block;
-                padding: 10px 0;
-                border-bottom: 1px solid #222;
-            }
+            /* Hide show-more on mobile (horizontal scroll replaces it) */
+            .show-more-wrap { display: none !important; }
 
-            .menu-toggle { display: block; }
+            /* Gallery mobile carousel */
+            .gallery-grid { display: none !important; }
+            .gallery-mobile-carousel { display: block !important; overflow: hidden; }
+            .gallery-carousel-track { display: flex; gap: 14px; width: max-content; animation: galleryScroll 35s linear infinite; }
+            @keyframes galleryScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+            .gallery-carousel-item { flex-shrink: 0; width: 240px; height: 180px; position: relative; overflow: hidden; border: 1px solid rgba(212,175,55,0.06); cursor: pointer; }
+            .gallery-carousel-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+            .gallery-carousel-item .g-ov { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px; background: linear-gradient(to top, rgba(10,10,10,0.9), transparent); }
+            .gallery-carousel-item .g-ov h4 { font-family: 'Playfair Display', serif; font-size: .85rem; margin-bottom: 2px; }
+            .gallery-carousel-item .g-ov span { font-size: .62rem; color: var(--gold); }
 
-            .hero-container {
-                flex-direction: column-reverse;
-                text-align: center;
-                gap: 40px;
-            }
+            .review-card { width: 280px; padding: 25px; }
+            .review-text { font-size: .95rem; }
+            .rating-big { font-size: 3rem; }
+            .why-card { width: 220px; padding: 25px 18px; }
+            .counter-item { min-width: 140px; gap: 10px; }
+            .counter-num { font-size: 1.8rem; }
 
-            .hero-content {
-                flex: none;
-                width: 100%;
-            }
+            /* Booking form */
+            .booking-box { padding: 25px 16px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full, .form-submit { grid-column: span 1; }
 
-            .hero-visual { flex: none; }
+            /* FIX 3: Time slots — 3 per row on mobile */
+            .time-slots { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .time-slot { padding: 9px 4px; font-size: .58rem; letter-spacing: 0; }
 
-            .royal-frame {
-                width: 250px;
-                height: 250px;
-            }
+            .cart-sidebar { width: 100%; max-width: 100vw; }
+            .success-box { padding: 35px 22px; }
+            .contact-card { padding: 18px; gap: 14px; }
+            .contact-map { min-height: 280px; }
+            .footer { padding: 50px 16px 20px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .toast-container { top: 65px; right: 10px; left: 10px; }
+            .toast { min-width: auto; max-width: 100%; font-size: .75rem; padding: 12px 16px; }
+            .float-btns { bottom: 18px; right: 18px; }
+            .float-btn { width: 46px; height: 46px; font-size: 1rem; }
+            .lb-nav { width: 36px; height: 36px; font-size: .8rem; }
+            .lb-prev { left: 10px; } .lb-next { right: 10px; }
 
-            .timeline::before { left: 0; }
-            .timeline-item {
-                width: 100%;
-                padding-left: 30px;
-                padding-right: 0;
-                text-align: left;
-            }
-            .timeline-item:nth-child(even) { left: 0; }
-            .timeline-dot { left: -10px !important; }
-
-            .skills-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .card-header { height: 250px; }
-            .card-body { padding: 20px; }
-
-            .contact-info, .contact-form {
-                padding: 40px 30px;
-            }
-
-            .cert-item {
-                min-width: 260px;
-            }
+            /* Popup on mobile */
+            .svc-popup { width: 95%; }
+            .svc-popup-img { height: 180px; }
+            .svc-popup-body { padding: 20px; }
+            .svc-popup-name { font-size: 1.2rem; }
+            .svc-popup-actions { flex-direction: column; }
+            .svc-popup-actions .btn-gold, .svc-popup-actions .btn-outline { width: 100%; }
         }
 
-        @media (max-width: 480px) {
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .hero-btns {
-                flex-direction: column;
-                width: 100%;
-            }
-            .btn {
-                width: 100%;
-                text-align: center;
-            }
-            .cert-item {
-                min-width: 220px;
-            }
+        /* ==============================
+           RESPONSIVE — SMALL MOBILE
+           ============================== */
+        @media (max-width: 420px) {
+            .hero-title { font-size: 1.6rem !important; }
+            .hero-logo-img { width: 55px; height: 55px; }
+            .section-title { font-size: 1.45rem !important; }
+            .about-content h3 { font-size: 1.35rem !important; }
+            .svc-grid .svc-card { min-width: 230px; }
+            .gallery-carousel-item { width: 200px; height: 155px; }
+            .review-card { width: 250px; padding: 20px; }
+            .nav-brand-name { font-size: .8rem; }
+            .nav-logo-img { width: 28px; height: 28px; }
+            /* 2 time slots per row on very small screens */
+            .time-slots { grid-template-columns: repeat(2, 1fr); }
         }
+        /* ==============================
+           DEVELOPER CREDIT (Fun )
+           ============================== */
+        /* GOOGLE FONT */
+@import url('https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap');
 
-        .overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1999;
-            display: none;
-        }
+.dev-credit {
+  text-align: center;
+  color: #b8b8b8;
+  font-size: 14px;
+  margin-top: 18px;
+  letter-spacing: 1px;
+}
 
-        .overlay.active {
-            display: block;
-        }
+.dev-credit span {
+  color: #d4af37;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.35s ease;
+  position: relative;
+  font-family: "Fredericka the Great", serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+}
+
+.dev-credit span:hover {
+  color: #fff0a6;
+  text-shadow:
+    0 0 8px rgba(212,175,55,0.8),
+    0 0 18px rgba(212,175,55,0.6),
+    0 0 30px rgba(212,175,55,0.45);
+}
+
+.dev-credit span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: #d4af37;
+  transition: 0.35s ease;
+  box-shadow: 0 0 10px rgba(212,175,55,0.7);
+}
+
+.dev-credit span:hover::after {
+  width: 100%;
+}
+
+.dev-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.dev-popup.active {
+  display: flex;
+}
+
+.dev-popup-box {
+  width: 100%;
+  max-width: 430px;
+  padding: 38px 30px;
+  text-align: center;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(17,17,17,0.96), rgba(38,31,18,0.98));
+  color: white;
+  border: 1px solid rgba(212,175,55,0.75);
+  box-shadow:
+    0 0 45px rgba(212,175,55,0.22),
+    0 0 100px rgba(0,0,0,0.55);
+  position: relative;
+  overflow: hidden;
+  animation: devPopupZoom 0.45s ease;
+}
+
+.dev-popup-box::before {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background: rgba(212,175,55,0.08);
+  border-radius: 50%;
+  top: -100px;
+  right: -90px;
+  filter: blur(10px);
+}
+
+.dev-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.dev-close:hover {
+  transform: rotate(90deg);
+  color: #d4af37;
+}
+
+.dev-tag {
+  color: #d4af37;
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.dev-popup-box h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+.dev-line {
+  width: 85px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+  margin: 0 auto 22px;
+  box-shadow: 0 0 14px rgba(212,175,55,0.9);
+}
+
+.dev-popup-box h3 {
+  color: #d4af37;
+  font-size: 42px;
+  margin-bottom: 10px;
+  font-family: "Fredericka the Great", serif;
+  letter-spacing: 3px;
+  text-shadow:
+    0 0 10px rgba(212,175,55,0.7),
+    0 0 24px rgba(212,175,55,0.45);
+}
+
+.dev-role {
+  color: #d0d0d0;
+  margin-bottom: 28px;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.dev-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.dev-buttons a {
+  text-decoration: none;
+  color: #111;
+  background: linear-gradient(135deg, #d4af37, #fff0a6);
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-weight: 700;
+  transition: 0.35s ease;
+  box-shadow: 0 8px 20px rgba(212,175,55,0.18);
+}
+
+.dev-buttons a:hover {
+  transform: translateY(-5px) scale(1.04);
+  box-shadow:
+    0 12px 26px rgba(212,175,55,0.4),
+    0 0 18px rgba(212,175,55,0.4);
+}
+
+@keyframes devPopupZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.82) translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-    <div class="overlay" id="overlay"></div>
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
 
-    <header id="header">
-        <div class="container">
-            <nav>
-                <a href="#" class="logo">SUJAL <span class="accent-text">.</span></a>
-                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="#home" class="nav-link">Home</a></li>
-                    <li><a href="#about" class="nav-link">Profile</a></li>
-                    <li><a href="#skills" class="nav-link">Skills</a></li>
-                    <li><a href="#certificates" class="nav-link">Certificates</a></li>
-                    <li><a href="#education" class="nav-link">Education</a></li>
-                    <li><a href="#projects" class="nav-link">Projects</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
-                </ul>
-            </nav>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loader">
+        <div class="loader-content">
+            <img src="img/logo.jpg" alt="VR Salon" class="loader-logo-img">
+            <div class="loader-bar"><div class="loader-fill"></div></div>
+            <div class="loader-sub">Crafting Elegance</div>
         </div>
-    </header>
-    
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-container">
-                <div class="hero-content">
-                    <span class="hero-greeting">The Architect</span>
-                    <h1 class="hero-name">Sujal <br>Pardeshi</h1>
-                    <p class="hero-role">Dedicated BCA Student & Full Stack Developer</p>
-                    <div class="hero-btns">
-                        <a href="#projects" class="btn">View Projects</a>
-                        <a href="sujal pardeshi resuma 3.docx" target="_blank" class="btn btn-fill">Download CV</a>
-                    </div>
-                </div>
-
-                <div class="hero-visual">
-                    <div class="royal-frame">
-                        <div class="ring ring-1"></div>
-                        <div class="ring ring-2"></div>
-                        <img src="A6.jpeg" alt="Sujal Pardeshi" class="profile-img" onerror="this.src='https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400'">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="about">
-        <div class="container">
-            <h2 class="section-title">About <span style="font-family: var(--font-serif);">Me</span></h2>
-            <div class="about-split">
-                <div class="about-text">
-                    <h3>Professional Identity</h3>
-                    <p>I am <strong>Sujal Pardeshi</strong>, a dedicated and enthusiastic Bachelor of Computer Applications (BCA) student at Tilak Maharashtra Vidyapeeth. I seek opportunities to apply my skills in web and software development, building efficient, user-centric applications.</p>
-                    <p>My work focuses on creating seamless interfaces between human intent and machine logic. I combine technical expertise with a refined design aesthetic to build platforms that are not just functional, but sophisticated.</p>
-                </div>
-                <div class="divider"></div>
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <span class="stat-num" data-target="3">0</span>
-                        <span class="stat-label">Projects</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-num" data-target="25">0</span>
-                        <span class="stat-label">Skills</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-num" data-target="100">0</span>
-                        <span class="stat-label">Dedication</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-num" data-target="24">0</span>
-                        <span class="stat-label">24/7 Learning</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="skills">
-        <div class="container">
-            <h2 class="section-title">Skills <span style="font-family: var(--font-serif);">Section</span></h2>
-            <div class="skills-grid" id="skillsGrid"></div>
-        </div>
-    </section>
-
-    <div class="overlay" id="panelOverlay"></div>
-    <div class="skill-panel" id="skillPanel">
-        <button class="close-panel" id="closePanel"><i class="fas fa-times"></i></button>
-        <div id="skillContent"></div>
     </div>
 
-    <section id="certificates">
-        <div class="container">
-            <h2 class="section-title">Certificates <span style="font-family: var(--font-serif);">Section</span></h2>
-            <div class="cert-container" id="certContainer"></div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-brand">
+            <img src="img/logo.jpg" alt="VR Salon Logo" class="nav-logo-img">
+            <div class="nav-brand-text">
+                <span class="nav-brand-name">VR Salon</span>
+                <span class="nav-brand-sub">Premium Beauty &amp; Grooming</span>
+            </div>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="#home"       class="nav-link active">Home</a></li>
+            <li><a href="#about"      class="nav-link">About</a></li>
+            <li><a href="#services"   class="nav-link">Services</a></li>
+            <li><a href="#gallery"    class="nav-link">Gallery</a></li>
+            <li><a href="#reviews"    class="nav-link">Reviews</a></li>
+            <li><a href="#booking"    class="nav-link">Book</a></li>
+            <li><a href="#contact"    class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-right">
+            <button class="nav-cart-btn" id="cartBtn" onclick="toggleCart()">
+                <i class="fas fa-shopping-bag"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+            <a href="#booking" class="nav-book-btn">Book Now</a>
+            <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
         </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#home"     onclick="closeMenu()">Home</a>
+        <a href="#about"    onclick="closeMenu()">About</a>
+        <a href="#services" onclick="closeMenu()">Services</a>
+        <a href="#gallery"  onclick="closeMenu()">Gallery</a>
+        <a href="#reviews"  onclick="closeMenu()">Reviews</a>
+        <a href="#booking"  onclick="closeMenu()">Book Now</a>
+        <a href="#contact"  onclick="closeMenu()">Contact</a>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-bag"></i>&nbsp; Booking Cart</h3>
+            <button class="cart-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total"><span>Total</span><span id="cartTotal">&#8377;0</span></div>
+            <button class="btn-gold cart-checkout" onclick="cartCheckout()">Confirm Appointment</button>
+        </div>
+    </div>
+
+    <!-- FIX 2: Service Popup Modal -->
+    <div class="svc-popup-overlay" id="svcPopupOverlay">
+        <div class="svc-popup" id="svcPopupBox">
+            <button class="svc-popup-close" id="svcPopupClose" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+            <!-- Popup content is injected by JavaScript -->
+            <img class="svc-popup-img" id="popupImg" src="" alt="">
+            <div class="svc-popup-body">
+                <div class="svc-popup-cat"  id="popupCat"></div>
+                <h3  class="svc-popup-name" id="popupName"></h3>
+                <div class="svc-popup-price" id="popupPrice"></div>
+                <p   class="svc-popup-desc" id="popupDesc"></p>
+                <div class="svc-popup-actions">
+                    <button class="btn-gold"    id="popupBookBtn">Book This Service</button>
+                    <button class="btn-outline" id="popupCartBtn"><i class="fas fa-plus"></i>&nbsp; Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lb-close" onclick="closeLb()"><i class="fas fa-times"></i></button>
+        <button class="lb-nav lb-prev" onclick="lbNav(-1)"><i class="fas fa-chevron-left"></i></button>
+        <button class="lb-nav lb-next" onclick="lbNav(1)"><i class="fas fa-chevron-right"></i></button>
+        <div class="lb-content">
+            <div class="lb-img-container"><img id="lbImage" src="" alt="Gallery"></div>
+        </div>
+    </div>
+
+    <!-- Booking Success Popup -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-box">
+            <div class="success-icon"><i class="fas fa-check"></i></div>
+            <h3>Booking <span class="gold-text">Confirmed!</span></h3>
+            <div class="s-id" id="successId"></div>
+            <div class="s-summary" id="successSummary"></div>
+            <p class="s-msg">Your appointment request has been successfully submitted. Our team will contact you shortly for confirmation.</p>
+            <button class="btn-gold" onclick="closeSuccess()">Done</button>
+        </div>
+    </div>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="home">
+        <div class="hero-fallback"></div>
+        <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
+            <source src="video/hero.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+            <div class="hero-badge"><span class="badge-dot"></span>Open Daily: 10 AM &ndash; 11 PM</div>
+            <h1 class="hero-title">Luxury Grooming<br>Crafted For <span class="gold-text">Modern Elegance</span></h1>
+            <p class="hero-sub">Experience world-class beauty, precision styling, and premium self-care designed to elevate your confidence and redefine your personal style.</p>
+            <div class="hero-btns">
+                <a href="#booking" class="btn-gold"><i class="far fa-calendar-alt"></i>&nbsp;&nbsp;Book Appointment</a>
+                <a href="#services" class="btn-outline"><i class="fas fa-spa"></i>&nbsp;&nbsp;Explore Services</a>
+            </div>
+        </div>
+        <div class="scroll-indicator"><span class="scroll-txt">Scroll</span><div class="scroll-line"></div></div>
     </section>
 
-    <section id="education">
-        <div class="container">
-            <h2 class="section-title">Education <span style="font-family: var(--font-serif);">Section</span></h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <span class="year">2023 - 2026</span>
-                    <h3 style="color: #fff;">Bachelor of Computer Applications (BCA)</h3>
-                    <p style="color:#888; font-family: var(--font-serif);">Tilak Maharashtra Vidyapeeth, Pune</p>
+    <!-- ===== ABOUT ===== -->
+    <section class="section about" id="about">
+        <div class="section-header reveal">
+            <div class="section-label">About Us</div>
+            <h2 class="section-title">The Art of <span class="gold-text">Premium Grooming</span></h2>
+            <p class="section-desc">Where every visit is a transformative experience crafted with passion, precision, and artistry.</p>
+            <div class="gold-line"></div>
+        </div>
+        <div class="about-grid">
+            <div class="about-visual reveal-l">
+                <div class="about-img-box">
+                    <img src="img/owner.jpeg" alt="Ganesh Tiwari - Owner of VR Salon" class="about-owner-img">
                 </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <span class="year">2022 - 2023</span>
-                    <h3 style="color: #fff;">Higher Secondary Education (11th–12th, Commerce)</h3>
-                    <p style="color:#888; font-family: var(--font-serif);">New High School & Jr. College, Kalyan</p>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <span class="year">2008 - 2021</span>
-                    <h3 style="color: #fff;">Secondary School Certificate (SSC)</h3>
-                    <p style="color:#888; font-family: var(--font-serif);">Chetna English High School, Kalyan (East)</p>
+                <div class="about-badge"><span class="about-badge-num">5.0</span><span class="about-badge-txt">&#9733; Rating</span></div>
+            </div>
+            <div class="about-content reveal-r">
+                <h3>Welcome to <span class="gold-text">VR Salon</span></h3>
+                <p>Welcome to VR Salon, a professional salon in Kalyan East offering modern haircuts, grooming, hair treatments, hair colour, hair spa, and nail services for men and women. Our goal is to give every client a stylish, confident, and premium salon experience.</p>
+                <p>VR Salon is owned by Ganesh Tiwari, who believes in quality service, clean work, modern styling, and customer satisfaction. Whether you need a fresh haircut, beard styling, hair treatment, colour service, or nail care, VR Salon is here to give you the best look with professional care.</p>
+                <div class="about-features">
+                    <div class="about-feat"><i class="fas fa-award"></i><span>Certified Stylists</span></div>
+                    <div class="about-feat"><i class="fas fa-pump-soap"></i><span>Premium Products</span></div>
+                    <div class="about-feat"><i class="fas fa-shield-alt"></i><span>Hygienic Environment</span></div>
+                    <div class="about-feat"><i class="fas fa-clock"></i><span>Open Daily: 10 AM &ndash; 11 PM</span></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="projects">
-        <div class="container">
-            <h2 class="section-title">Projects <span style="font-family: var(--font-serif);">Section</span></h2>
+    <!-- ===== SERVICES ===== -->
+    <section class="section services" id="services">
+        <div class="section-header reveal">
+            <div class="section-label">Our Services</div>
+            <h2 class="section-title">Luxury Beauty &amp; <span class="gold-text">Grooming Experiences</span></h2>
+            <p class="section-desc">Discover expertly crafted salon services designed to refresh, enhance, and transform your complete look with elegance and precision.</p>
+            <div class="gold-line"></div>
+        </div>
+        <div class="svc-cats reveal" id="svcCats"></div>
+        <div class="svc-grid"           id="svcGrid"></div>
 
-            <div class="project-gallery">
-                <div class="slider-track" id="projectSlider"></div>
-                <div class="slider-nav">
-                    <button class="nav-arrow" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-arrow" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        <!-- FIX 1: Show More / Show Less button -->
+        <div class="show-more-wrap" id="showMoreWrap" style="display:none;">
+            <button class="show-more-btn" id="showMoreBtn" type="button">
+                <span id="showMoreText">Show More Services</span>
+                <i class="fas fa-chevron-down sm-icon"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- ===== WHY CHOOSE US ===== -->
+    <section class="section why-section" id="whychoose">
+        <div class="section-header reveal">
+            <div class="section-label">The Difference</div>
+            <h2 class="section-title">Why Clients <span class="gold-text">Trust VR Salon</span></h2>
+            <div class="gold-line"></div>
+        </div>
+        <div class="marquee-wrap"><div class="marquee-track" id="whyMarquee"></div></div>
+    </section>
+
+    <!-- ===== COUNTERS ===== -->
+    <div class="counters-section">
+        <div class="counter-marquee"><div class="counter-track" id="counterTrack"></div></div>
+    </div>
+
+    <!-- ===== GALLERY ===== -->
+    <section class="section gallery" id="gallery">
+        <div class="section-header reveal">
+            <div class="section-label">Our Portfolio</div>
+            <h2 class="section-title">Real <span class="gold-text">Transformations</span></h2>
+            <p class="section-desc">Explore real transformations and signature styling moments created by our expert artists.</p>
+            <div class="gold-line"></div>
+        </div>
+        <div class="gallery-grid"             id="galleryGrid"></div>
+        <div class="gallery-mobile-carousel"  id="galleryMobileCarousel"></div>
+    </section>
+
+    <!-- ===== REVIEWS ===== -->
+    <section class="section reviews" id="reviews">
+        <div class="section-header reveal">
+            <div class="section-label">Testimonials</div>
+            <h2 class="section-title">What Our <span class="gold-text">Clients Say</span></h2>
+            <p class="section-desc">Real experiences, trusted transformations, and luxury salon moments shared by our happy clients.</p>
+            <div class="gold-line"></div>
+        </div>
+        <div class="review-rating reveal">
+            <div class="rating-big">5.0</div>
+            <div class="rating-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+            <div class="rating-txt">Based on Google Reviews</div>
+        </div>
+        <div class="review-marquee"><div class="review-track" id="reviewTrack"></div></div>
+    </section>
+
+    <!-- ===== BOOKING ===== -->
+    <section class="section booking" id="booking">
+        <div class="section-header reveal">
+            <div class="section-label">Appointment</div>
+            <h2 class="section-title">Book Your <span class="gold-text">Experience</span></h2>
+            <p class="section-desc">Reserve your premium grooming session and let us take care of the rest.</p>
+            <div class="gold-line"></div>
+        </div>
+        <div class="booking-box reveal">
+            <div class="booking-cart-summary" id="bookingCartSummary">
+                <h4><i class="fas fa-shopping-bag"></i>&nbsp; Selected Services</h4>
+                <div class="booking-cart-list" id="bookingCartList"></div>
+                <div class="bk-total" id="bkTotal"></div>
+            </div>
+            <form id="bookingForm" onsubmit="handleBooking(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" class="form-input" id="bkName" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone *</label>
+                        <input type="tel" class="form-input" id="bkPhone" placeholder="+91 XXXXX XXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date *</label>
+                        <input type="date" class="form-input" id="bkDate" required>
+                    </div>
+
+                    <!-- FIX 3: Time Slot — improved UI via CSS above -->
+                    <div class="form-group">
+                        <label class="form-label">Time Slot *</label>
+                        <!-- Grid of time-slot buttons rendered by JS -->
+                        <div class="time-slots" id="bkTimeSlots"></div>
+                        <input type="hidden" id="bkTime">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Select Service</label>
+                        <select class="form-select" id="bkService">
+                            <option value="">Choose a service</option>
+                        </select>
+                        <span class="svc-select-note" id="svcNote">Or add services from service cards above</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email (optional)</label>
+                        <input type="email" class="form-input" id="bkEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Notes (optional)</label>
+                        <textarea class="form-textarea" id="bkNotes" placeholder="Any special requests..."></textarea>
+                    </div>
+                    <div class="form-submit">
+                        <button type="submit" class="btn-gold">
+                            <i class="fas fa-calendar-check"></i>&nbsp;&nbsp;Confirm Booking
+                        </button>
+                    </div>
                 </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="section contact" id="contact">
+        <div class="section-header reveal">
+            <div class="section-label">Get in Touch</div>
+            <h2 class="section-title">Visit <span class="gold-text">VR Salon</span></h2>
+            <p class="section-desc">We would love to welcome you. Reach out anytime!</p>
+            <div class="gold-line"></div>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-cards">
+                <div class="contact-card reveal-l">
+                    <div class="cc-icon"><i class="fas fa-phone-alt"></i></div>
+                    <div><h4>Call Us</h4><a href="tel:+919867261962">+91 98672 61962</a></div>
+                </div>
+                <div class="contact-card reveal-l">
+                    <div class="cc-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div><h4>Visit Us</h4><p>VR Salon, Kalyan East, Maharashtra, India</p></div>
+                </div>
+                <div class="contact-card reveal-l">
+                    <div class="cc-icon"><i class="fas fa-clock"></i></div>
+                    <div><h4>Hours</h4><p style="color:#00ff88;font-weight:600;">&#9679; Open Daily: 10 AM &ndash; 11 PM</p></div>
+                </div>
+                <div class="contact-card reveal-l">
+                    <div class="cc-icon"><i class="fas fa-share-alt"></i></div>
+                    <div>
+                        <h4>Follow Us</h4>
+                        <div class="social-links">
+                            <a href="https://www.instagram.com/vr_salon_1?igsh=Z2hrNjcwY2x4Z3pv" class="soc-link" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                            <a href="https://m.youtube.com/watch?v=a1o1GtJza0o" class="soc-link" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                            <a href="https://wa.me/919867261962" class="soc-link" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-map reveal-r">
+                <!-- Updated map: Kalyan East coordinates -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d1000!2d73.12622821761123!3d19.21975661119926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTnCsDEzJzExLjEiTiA3M8KwMDcnMzQuNCJF!5e0!3m2!1sen!2sin!4v1" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </section>
 
-    <section id="contact">
-        <div class="container">
-            <h2 class="section-title">Contact <span style="font-family: var(--font-serif);">Section</span></h2>
-            <div class="contact-split">
-                <div class="contact-info">
-                    <h3 style="color:var(--accent); margin-bottom:30px; font-family:var(--font-display);">Get In Touch</h3>
-                    <div class="info-row">
-                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div>
-                            <h4 style="color:#fff">Location</h4>
-                            <p style="color:#888">Kalyan (East), Maharashtra</p>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-icon"><i class="fas fa-phone"></i></div>
-                        <div>
-                            <h4 style="color:#fff">Phone</h4>
-                            <p style="color:#888">7718972575</p>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                        <div>
-                            <h4 style="color:#fff">Email</h4>
-                            <p style="color:#888">sujalpardeshi62@gmail.com</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="input-group">
-                            <input type="text" class="input-field" required>
-                            <label class="input-label">Name</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="email" class="input-field" required>
-                            <label class="input-label">Email</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" class="input-field" required>
-                            <label class="input-label">Subject</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" class="input-field" required>
-                            <label class="input-label">Message</label>
-                        </div>
-                        <button type="submit" class="btn btn-fill" style="width:100%; border:none;">Send Message</button>
-                    </form>
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <img src="img/logo.jpg" alt="VR Salon Logo" class="footer-logo-img">
+                <div class="footer-brand-name">VR Salon</div>
+                <div class="footer-brand-sub">Premium Beauty &amp; Grooming</div>
+                <p>VR Salon offers professional haircuts, grooming, hair treatments, hair colour, hair spa, and nail services for men and women in Kalyan East, Maharashtra.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/vr_salon_1?igsh=Z2hrNjcwY2x4Z3pv" class="soc-link" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                    <a href="https://m.youtube.com/watch?v=a1o1GtJza0o" class="soc-link" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                    <a href="https://wa.me/919867261962" class="soc-link" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
+            <div>
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#booking">Book Now</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#services">Men's Hair Services</a></li>
+                    <li><a href="#services">Men's Grooming</a></li>
+                    <li><a href="#services">Women's Hair Services</a></li>
+                    <li><a href="#services">Hair Treatments</a></li>
+                    <li><a href="#services">Hair Colour</a></li>
+                    <li><a href="#services">Hair Spa</a></li>
+                    <li><a href="#services">Nail Services</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <ul class="footer-links">
+                    <li><a href="tel:+919867261962"><i class="fas fa-phone" style="font-size:.5rem"></i>&nbsp;+91 98672 61962</a></li>
+                    <li><a href="#contact"><i class="fas fa-map-marker-alt" style="font-size:.5rem"></i>&nbsp;Kalyan East, Maharashtra</a></li>
+                    <li><a href="#" style="color:#00ff88"><i class="fas fa-clock" style="font-size:.5rem"></i>&nbsp;10 AM &ndash; 11 PM Daily</a></li>
+                </ul>
+            </div>
         </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Sujal Pardeshi. All Rights Reserved.</p>
+        <p class="dev-credit">
+  Designed & Developed by 
+  <span id="openDevPopup">Sujal Pardeshi</span>
+</p>
+        <div class="footer-bottom">
+            <div class="footer-copy">&copy; 2024 VR Salon. All Rights Reserved.</div>
+        </div>
     </footer>
 
-    <div class="modal" id="certModal">
-        <span class="close-modal">&times;</span>
-        <div class="modal-content">
-            <img src="" id="modalImg" alt="Certificate" style="max-width:100%; display:block;">
-        </div>
+    <!-- Floating Buttons -->
+    <div class="float-btns">
+        <button class="float-btn top-btn" id="topBtn"    onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+        <button class="float-btn bottom-btn vis" id="bottomBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})"><i class="fas fa-chevron-down"></i></button>
+        <a href="https://wa.me/919867261962?text=Hi! I'd like to book an appointment at VR Salon." class="float-btn wa-btn" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
     </div>
+    
+     <div class="dev-popup" id="devPopup">
+  <div class="dev-popup-box">
+    <button class="dev-close" id="closeDevPopup">×</button>
 
-    <script>
-        const skillsData = [
-            {
-                icon: 'fab fa-python',
-                title: 'Python',
-                desc: 'Programming Language',
-                skills: [
-                    {name: 'Core Python', pct: 90},
-                    {name: 'Data Structures', pct: 85},
-                    {name: 'OOP', pct: 88}
-                ]
-            },
-            {
-                icon: 'fab fa-js',
-                title: 'JavaScript',
-                desc: 'Programming Language',
-                skills: [
-                    {name: 'ES6+', pct: 95},
-                    {name: 'DOM Manipulation', pct: 92},
-                    {name: 'Async/Await', pct: 90}
-                ]
-            },
-            {
-                icon: 'fab fa-html5',
-                title: 'HTML5',
-                desc: 'Markup Language',
-                skills: [
-                    {name: 'Semantic HTML', pct: 95},
-                    {name: 'Forms & Validation', pct: 90},
-                    {name: 'Accessibility', pct: 85}
-                ]
-            },
-            {
-                icon: 'fab fa-css3-alt',
-                title: 'CSS3',
-                desc: 'Styling Language',
-                skills: [
-                    {name: 'Flexbox & Grid', pct: 95},
-                    {name: 'Animations', pct: 92},
-                    {name: 'Responsive Design', pct: 95}
-                ]
-            },
-            {
-                icon: 'fas fa-database',
-                title: 'MongoDB',
-                desc: 'NoSQL Database',
-                skills: [
-                    {name: 'CRUD Operations', pct: 90},
-                    {name: 'Aggregation', pct: 80},
-                    {name: 'Schema Design', pct: 85}
-                ]
-            },
-            {
-                icon: 'fas fa-server',
-                title: 'REST API',
-                desc: 'Web Services',
-                skills: [
-                    {name: 'API Design', pct: 85},
-                    {name: 'HTTP Methods', pct: 90},
-                    {name: 'Authentication', pct: 80}
-                ]
-            },
-            {
-                icon: 'fab fa-git-alt',
-                title: 'Git & GitHub',
-                desc: 'Version Control',
-                skills: [
-                    {name: 'Git Commands', pct: 90},
-                    {name: 'Branching', pct: 85},
-                    {name: 'Collaboration', pct: 88}
-                ]
-            },
-            {
-                icon: 'fas fa-code',
-                title: 'C/C++',
-                desc: 'Programming Languages',
-                skills: [
-                    {name: 'C Programming', pct: 85},
-                    {name: 'C++', pct: 80},
-                    {name: 'Data Structures', pct: 82}
-                ]
-            },
-            {
-                icon: 'fas fa-palette',
-                title: 'Adobe Photoshop',
-                desc: 'Graphic Design',
-                skills: [
-                    {name: 'Image Editing', pct: 85},
-                    {name: 'Design', pct: 80},
-                    {name: 'UI Mockups', pct: 75}
-                ]
-            },
-            {
-                icon: 'fas fa-video',
-                title: 'OBS Studio',
-                desc: 'Video Production',
-                skills: [
-                    {name: 'Screen Recording', pct: 80},
-                    {name: 'Live Streaming', pct: 75},
-                    {name: 'Video Editing', pct: 75}
-                ]
-            },
-            {
-                icon: 'fas fa-robot',
-                title: 'AI Tools',
-                desc: 'Artificial Intelligence',
-                skills: [
-                    {name: 'ChatGPT', pct: 85},
-                    {name: 'AI Integration', pct: 75},
-                    {name: 'Prompt Engineering', pct: 80}
-                ]
-            },
-            {
-                icon: 'fas fa-lock',
-                title: 'Cybersecurity',
-                desc: 'Security Basics',
-                skills: [
-                    {name: 'Security Fundamentals', pct: 70},
-                    {name: 'Network Security', pct: 65},
-                    {name: 'Best Practices', pct: 75}
-                ]
-            }
-        ];
+    <p class="dev-tag">Like this website?</p>
+    <h2>Get one for your business.</h2>
 
-        const certData = [
-            { category: "IBM SkillsBuild Certifications", certs: [
-                { name: "Computer Basics", file: "Screenshot 2024-03-17 001005.png" },
-                { name: "Computer Networking Basics", file: "Screenshot 2024-03-17 001031.png" },
-                { name: "Computing from Past to Present", file: "Screenshot 2024-03-17 001052.png" },
-                { name: "Security Basics", file: "Screenshot 2024-03-17 001123.png" },
-                { name: "Support Basics", file: "Screenshot 2024-03-17 001147.png" },
-                { name: "Troubleshooting Hardware", file: "Screenshot 2024-03-17 001232.png" },
-                { name: "Support Customer Network", file: "Screenshot 2024-03-17 001258.png" },
-                { name: "Future in IT Support", file: "Screenshot 2024-03-17 001339.png" },
-                { name: "IT Fundamentals", file: "Screenshot 2024-03-24 102635.png" }
-            ]},
-            { category: "Forage Simulations", certs: [
-                { name: "AWS Solutions Architecture", file: "Screenshot 2025-11-02 214607.png" },
-                { name: "Cybersecurity Analyst", file: "Screenshot 2025-11-02 214637.png" },
-                { name: "GenAI Data Analytics", file: "Screenshot 2025-11-02 214658.png" },
-                { name: "Deloitte Cyber", file: "Screenshot 2025-11-02 214720.png" }
-            ]}
-        ];
+    <div class="dev-line"></div>
 
-        const projectsData = [
-            {
-                title: "Salon Booking System",
-                desc: "A full-stack system to automate appointment scheduling and salon management. Enables online bookings and efficient admin management.",
-                img: "https://images.pexels.com/photos/3993449/pexels-photo-3993449.jpeg?auto=compress&cs=tinysrgb&w=800",
-                tags: ["HTML", "CSS", "JavaScript", "MongoDB", "Node.js"],
-                github: "https://sujalpardeshi62-bot.github.io/saloon-booking-system/"
-            },
-            {
-                title: "Pooja Bazaar",
-                desc: "An online platform for spiritual items. Connects authentic sellers with devotees.",
-                img: "pooja bazzar.png",
-                tags: ["HTML", "CSS", "JavaScript", "AI"],
-                github: "https://sujalpardeshi62-bot.github.io/pooja-bazaar/pbhome.html"
-            },
-            {
-                title: "Adopt Me",
-                desc: "Rescue network for animal adoption and awareness. Connecting shelters with adopters.",
-                img: "adopt me.jpg",
-                tags: ["HTML", "CSS", "JavaScript"],
-                github: "#"
-            }
-        ];
+    <h3>Sujal Pardeshi</h3>
+    <p class="dev-role">Website Designer & Developer</p>
 
-        function renderSkills() {
-            const grid = document.getElementById('skillsGrid');
-            skillsData.forEach((s, i) => {
-                const el = document.createElement('div');
-                el.className = 'skill-card';
-                el.innerHTML = `
-                    <i class="${s.icon} skill-icon"></i>
-                    <h3 style="color:#fff; margin-bottom:10px;">${s.title}</h3>
-                    <p style="color:#666; font-size:0.9rem;">${s.desc}</p>
-                `;
-                el.onclick = () => openSkillPanel(i);
-                grid.appendChild(el);
-            });
+    <div class="dev-buttons">
+      <a href="https://www.instagram.com/sujal.pardeshi_xl?igsh=YzA4Yjk5aXdzNGF2" target="_blank">Instagram</a>
+      <a href="https://wa.me/917718972575" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+</div>
+<!-- ==============================
+     JAVASCRIPT
+     ============================== -->
+<script>
+
+/* ==================================================
+   SERVICE DATA — All real VR Salon services
+   img src: replace paths when you have real photos
+   ================================================== */
+const SERVICES = [
+    // Men's Hair
+    { cat:"Men's Hair", img:'img/img7.jpeg',     name:"Men's Haircut + Beard",          price:200,  desc:"Professional haircut combined with expert beard styling for a complete groomed look." },
+    { cat:"Men's Hair", img:'img/Men’s Haircut.jpg',           name:"Men's Haircut",                  price:130,  desc:"Precision haircut tailored to your face shape and personal style by expert stylists." },
+    { cat:"Men's Hair", img:'img/Advanced Haircut.jpg',       name:'Advanced Haircut',               price:200,  desc:"Premium styling with advanced cutting techniques for a sharp, modern look." },
+    { cat:"Men's Hair", img:'img/Hair Wash.jpg',              name:'Hair Wash',                      price:150,  desc:"Refreshing hair wash with premium shampoo and a relaxing scalp massage." },
+    { cat:"Men's Hair", img:'img/Protein Hair Wash.jpg',      name:'Protein Hair Wash',              price:200,  desc:"Deep cleansing protein-enriched hair wash for stronger, healthier hair." },
+    { cat:"Men's Hair", img:'img/Beard Styling.jpg',                  name:'Beard',                          price:80,   desc:"Expert beard trimming and shaping to complement your facial features perfectly." },
+    // Men's Grooming
+    { cat:" Grooming", img:'img/De-Tan.jpg',             name:'De-Tan',                         price:450,  desc:"Professional de-tan treatment to remove sun damage and restore your natural skin tone." },
+    { cat:" Grooming", img:'img/De-Tan + Cleanup.jpg',     name:'De-Tan + Cleanup',               price:850,  desc:"Complete de-tan treatment combined with a deep cleansing facial cleanup." },
+    { cat:" Grooming", img:'img/Cleanup.jpg',            name:'Cleanup',                        price:350,  desc:"Deep cleansing facial cleanup to remove impurities and refresh your skin." },
+    { cat:" Grooming", img:'img/Hair Straightening.jpg',  name:'Straightening',                  price:1500, desc:"Professional hair straightening for sleek, smooth, and manageable hair." },
+    { cat:" Grooming", img:'img/botox treatment.jpg',          name:'Botox',                          price:2200, desc:"Advanced hair botox treatment for deep repair and intense shine." },
+    { cat:" Grooming", img:'img/Keratin Treatment.jpg',        name:'Keratin',                        price:1800, desc:"Keratin treatment for smooth, frizz-free, and long-lasting manageable hair." },
+    // Hair Colour
+    { cat:'Hair Colour', img:'img/global hair colour.jpg',    name:'Global Hair Colour',             price:800,  desc:"Full head colouring with premium dyes for vibrant, even, long-lasting results." },
+    { cat:'Hair Colour', img:'img/Highlights.jpg',            name:'Highlights',                     price:600,  desc:"Dimensional highlights that add depth, movement, and visual interest to your hair." },
+    { cat:"Hair Colour", img:'img/Highlights Per Strip.jpg', name:'Highlights Per Strip',           price:300,  desc:"Individual highlight strips for customized, natural-looking dimensional colour." },
+
+    // Women's Hair
+    { cat:"Women's Hair", img:'img/basic haircut.jpg',  name:'Basic Haircut',                  price:400,  desc:"Classic precision haircut for women, tailored to your individual style preference." },
+    { cat:"Women's Hair", img:'img/Advanced Haircut f.jpg', name:'Advanced Haircut',             price:800,  desc:"Premium advanced haircut using modern cutting techniques for a stunning result." },
+    { cat:"Women's Hair", img:'img/basic haircut with wash.jpg',  name:'Basic Haircut with Wash',        price:650,  desc:"Basic haircut combined with a refreshing premium hair wash and conditioning." },
+    { cat:"Women's Hair", img:'img/Advanced Haircut with Wash.jpg',name:'Advanced Haircut with Wash',     price:1200, desc:"Advanced haircut with premium wash, conditioning, and expert styling finish." },
+    { cat:"Women's Hair", img:'img/Global Hair Colour.jpg',  name:'Global Hair Colour',             price:4000, desc:"Premium full-head colour service with international-grade professional products." },
+    // Hair Treatments
+    { cat:'Hair Treatments', img:'img/keratin treatment.jpg', name:'Keratin Treatment',              price:4500, desc:"Professional keratin treatment for silky smooth, frizz-free, beautiful hair." },
+    { cat:'Hair Treatments', img:'img/Botox Treatment.jpg',   name:'Botox Treatment',                price:6000, desc:"Advanced botox treatment for deep hair repair, nourishment, and intense shine." },
+    { cat:'Hair Treatments', img:'img/hair straighteningf.jpg', name:'Straightening',            price:5000, desc:"Professional permanent straightening for sleek, perfectly straight hair." },
+    { cat:'Hair Treatments', img:'img/Smoothening.jpg',       name:'Smoothening',                    price:4000, desc:"Advanced smoothening for naturally smooth, frizz-free, and manageable hair." },
+    // Hair Spa
+    { cat:'Hair Spa', img:'img/Basic Hair Spa.jpg',           name:'Basic Hair Spa',                 price:600,  desc:"Relaxing hair spa treatment to nourish and rejuvenate dull or tired hair." },
+    { cat:'Hair Spa', img:'img/Advanced Hair Spa.jpg',        name:'Advanced Hair Spa',              price:800,  desc:"Premium hair spa with deep conditioning for ultimate hydration and care." },
+    { cat:'Hair Spa', img:'img/Protein Hair Spa.jpg',         name:'Protein Hair Spa',               price:1200, desc:"Protein-enriched spa treatment for stronger, healthier, and more resilient hair." },
+    { cat:'Hair Spa', img:'img/Dandruff Treatment.jpg',       name:'Dandruff Treatment',             price:1500, desc:"Specialized treatment to eliminate dandruff and restore a healthy scalp." },
+    // Nail Services
+    { cat:'Nail Services', img:'img/Manicure.jpg',             name:'Manicure',                      price:200,  desc:"Professional manicure for beautifully groomed, clean, and healthy hands." },
+    { cat:'Nail Services', img:'img/Pedicure.jpg',             name:'Pedicure',                      price:200,  desc:"Relaxing pedicure for soft, smooth, and perfectly pampered feet." },
+    { cat:'Nail Services', img:'img/Gel Polish.jpg',           name:'Gel Polish',                    price:600,  desc:"Long-lasting gel polish application for a flawless, glossy, chip-free finish." },
+    { cat:'Nail Services', img:'img/Temporary nail extension.jpg', name:'TemporaryExtension.jpg',  name:'Temporary Extension',           price:999,  desc:"Beautiful temporary nail extensions for instant length and stylish appearance." },
+    { cat:'Nail Services', img:'img/Gel Extension.jpg',        name:'Gel Extension',                 price:1200, desc:"Premium gel nail extensions for durable, natural-looking length and strength." },
+    { cat:'Nail Services', img:'img/Cat Eye .jpg',     name:'Nail Art Cat Eye / Chrome Per Finger', price:20, desc:"Trendy cat eye or chrome nail art effect applied per finger." },
+    { cat:'Nail Services', img:'img/Any Nail Art Per Finger.jpg',         name:'Any Nail Art Per Finger',       price:20,   desc:"Custom nail art design of your choice applied per finger." },
+    { cat:'Nail Services', img:'img/3D Nail Art.jpg',          name:'3D Nail Art Per Finger',        price:50,   desc:"Premium 3D nail art design applied per finger for a stunning, unique look." },
+    { cat:'Nail Services', img:'img/Gel Nail Polish.jpg',      name:'Gel Nail Polish',               price:600,  desc:"High-quality gel nail polish application for long-lasting shine and colour." },
+];
+
+/* Static data */
+const WHY_DATA = [
+    {icon:'fa-snowflake', title:'AC Premium Interior',    desc:'Air conditioned luxury salon space'},
+    {icon:'fa-music',     title:'Relaxing Music',         desc:'Curated ambient music experience'},
+    {icon:'fa-couch',     title:'Comfortable Lounge',     desc:'Spacious waiting area with sofas'},
+    {icon:'fa-user-graduate', title:'Expert Stylists',   desc:'Highly trained professionals'},
+    {icon:'fa-flask',     title:'Imported Products',      desc:'Premium international-grade products'},
+    {icon:'fa-shield-virus',  title:'Hygienic Tools',    desc:'Sterilized equipment always'},
+    {icon:'fa-comments',  title:'Personal Consultation',  desc:'Tailored recommendations for you'},
+    {icon:'fa-heart',     title:'Customer Satisfaction',  desc:'Your happiness is our priority'},
+];
+const COUNTERS = [
+    {num:'5,000+', label:'Happy Clients'},
+    {num:'35+',    label:'Premium Services'},
+    {num:'10+',    label:'Expert Stylists'},
+    {num:'8+',     label:'Years Experience'},
+];
+const GALLERY_DATA = [
+    {src:'img/img1.jpeg', title:'Hair Styling',      cat:"Men's Cut"},
+    {src:'img/img2.jpeg', title:'Bridal Look',        cat:"Women's Styling"},
+    {src:'img/img3.jpeg', title:'Colour Artistry',    cat:'Hair Colour'},
+    {src:'img/img4.jpeg', title:'Beard Perfection',   cat:"Men's Grooming"},
+    {src:'img/img5.jpeg', title:'Keratin Smoothing',  cat:'Hair Treatment'},
+    {src:'img/img6.jpeg', title:'Party Glam',         cat:"Women's Styling"},
+    {src:'img/img7.jpeg', title:'Spa Relaxation',     cat:'Hair Spa'},
+    {src:'img/img8.jpeg', title:'Nail Art',           cat:'Nail Services'},
+];
+const REVIEWS = [
+    {name:'Raj Yadav',       init:'RY', text:'Staff are very friendly and services are excellent. Highly recommended for quality grooming at affordable prices.'},
+    {name:'Pramod Jadhav',   init:'PJ', text:'Excellent hairstyling and hair treatment services. Very professional team using premium quality products. Best salon in Kalyan!'},
+    {name:'Pappu Sharma',    init:'PS', text:'Professional hairstyling experience. Very clean and hygienic environment. The stylists really know their craft.'},
+    {name:'Sneha Patil',     init:'SP', text:'Amazing styling! They made my look absolutely unforgettable. Highly skilled artists with great attention to detail.'},
+    {name:'Amit Gupta',      init:'AG', text:'Got keratin treatment done here. Results are incredible! My hair has never been this smooth and manageable.'},
+    {name:'Priya Deshmukh',  init:'PD', text:'Best facial and cleanup service! My skin was glowing after the session. The products they use are top notch.'},
+];
+const TIME_SLOTS = ['10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM'];
+
+/* ==============================
+   STATE
+   ============================== */
+let cart         = JSON.parse(localStorage.getItem('vrCart')) || [];
+let lbIndex      = 0;
+let popupSvcIdx  = null;   // Which service is shown in popup
+let showAll      = false;  // Show-more toggle
+let currentCat   = 'All'; // Active filter category
+const INIT_COUNT = 8;      // Cards shown before "Show More"
+
+/* ==============================
+   TOAST
+   ============================== */
+function showToast(msg, type='info', dur=4000) {
+    const c   = document.getElementById('toastContainer');
+    const el  = document.createElement('div');
+    el.className = 'toast ' + type;
+    const icons = { success:'fa-check-circle', warning:'fa-exclamation-triangle', error:'fa-times-circle', info:'fa-info-circle' };
+    el.innerHTML = `<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span><button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+    c.appendChild(el);
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+    setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, dur);
+}
+
+/* ==============================
+   PAGE INIT
+   ============================== */
+window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('hidden'), 2200);
+
+    initParticles();
+    initServices();
+    initWhyMarquee();
+    initCounterMarquee();
+    initGallery();
+    initReviewMarquee();
+    buildTimeSlots('bkTimeSlots', 'bkTime');
+    populateBookingSelect();
+    updateCartUI();
+    setupPopupListeners(); // FIX 2
+
+    // Min booking date = today
+    const d = document.getElementById('bkDate');
+    if (d) d.min = new Date().toISOString().split('T')[0];
+
+    // Video loaded
+    document.getElementById('heroVideo').addEventListener('canplaythrough', function () {
+        this.classList.add('loaded');
+    });
+});
+
+/* ==============================
+   PARTICLES
+   ============================== */
+function initParticles() {
+    const c = document.getElementById('particles');
+    for (let i = 0; i < 25; i++) {
+        const p = document.createElement('div');
+        p.className = 'h-particle';
+        p.style.left              = Math.random() * 100 + '%';
+        p.style.animationDelay    = Math.random() * 10 + 's';
+        p.style.animationDuration = (Math.random() * 7 + 6) + 's';
+        const s = Math.random() * 2 + 1;
+        p.style.width = p.style.height = s + 'px';
+        c.appendChild(p);
+    }
+}
+
+/* ==============================
+   SCROLL HANDLER
+   ============================== */
+window.addEventListener('scroll', () => {
+    const st = window.scrollY;
+    document.getElementById('navbar').classList.toggle('scrolled', st > 60);
+    document.getElementById('topBtn').classList.toggle('vis', st > 400);
+    const nearBottom = (window.innerHeight + st) >= document.body.scrollHeight - 200;
+    document.getElementById('bottomBtn').classList.toggle('vis', !nearBottom && st < 400);
+    const total = document.body.scrollHeight - window.innerHeight;
+    document.getElementById('scrollProgress').style.width = (st / total * 100) + '%';
+
+    // Active nav highlight
+    document.querySelectorAll('.section, .hero').forEach(sec => {
+        const id = sec.getAttribute('id');
+        if (id && st >= sec.offsetTop - 150) {
+            document.querySelectorAll('.nav-link').forEach(l =>
+                l.classList.toggle('active', l.getAttribute('href') === '#' + id)
+            );
         }
+    });
 
-        function renderCerts() {
-            const container = document.getElementById('certContainer');
-            certData.forEach(cat => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'cert-category';
+    // Scroll reveal
+    document.querySelectorAll('.reveal, .reveal-l, .reveal-r').forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('vis');
+    });
+});
 
-                const title = document.createElement('h3');
-                title.className = 'cert-category-title';
-                title.textContent = cat.category;
-                categoryDiv.appendChild(title);
+/* ==============================
+   MOBILE MENU
+   ============================== */
+document.getElementById('hamburger').addEventListener('click', function () {
+    this.classList.toggle('active');
+    const m = document.getElementById('mobileMenu');
+    m.classList.toggle('active');
+    document.body.style.overflow = m.classList.contains('active') ? 'hidden' : '';
+});
+function closeMenu() {
+    document.getElementById('hamburger').classList.remove('active');
+    document.getElementById('mobileMenu').classList.remove('active');
+    document.body.style.overflow = '';
+}
 
-                const slider = document.createElement('div');
-                slider.className = 'cert-slider';
+/* ==============================
+   FIX 1 — SERVICES: Show More / Less
+   Renders category-filtered cards.
+   On desktop shows first INIT_COUNT cards
+   then expands on button click.
+   ============================== */
+function initServices() {
+    // Build category buttons
+    const cats  = [...new Set(SERVICES.map(s => s.cat))];
+    const catEl = document.getElementById('svcCats');
+    catEl.innerHTML = '<button class="svc-cat-btn active" data-cat="All">All</button>' +
+        cats.map(c => `<button class="svc-cat-btn" data-cat="${c}">${c}</button>`).join('');
 
-                const track = document.createElement('div');
-                track.className = 'cert-track';
+    catEl.querySelectorAll('.svc-cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            catEl.querySelectorAll('.svc-cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCat = btn.dataset.cat;
+            showAll    = false;  // reset on category change
+            renderServices();
+        });
+    });
 
-                cat.certs.forEach(c => {
-                    const item = document.createElement('div');
-                    item.className = 'cert-item';
-                    item.innerHTML = `
-                        <i class="fas fa-certificate cert-icon"></i>
-                        <div>
-                            <div class="cert-title">${c.name}</div>
-                            <div class="cert-cat">${cat.category}</div>
-                        </div>
-                        <button class="view-btn" onclick="openModal('${c.file}')">VIEW</button>
-                    `;
-                    track.appendChild(item);
-                });
+    // Show-more button
+    document.getElementById('showMoreBtn').addEventListener('click', () => {
+        showAll = !showAll;
+        renderServices();
+    });
 
-                slider.appendChild(track);
+    renderServices();
+}
 
-                const controls = document.createElement('div');
-                controls.className = 'slider-controls';
-                controls.innerHTML = `
-                    <button class="slider-arrow" onclick="scrollCerts(this, 'left')"><i class="fas fa-chevron-left"></i></button>
-                    <button class="slider-arrow" onclick="scrollCerts(this, 'right')"><i class="fas fa-chevron-right"></i></button>
-                `;
+function renderServices() {
+    const grid    = document.getElementById('svcGrid');
+    const wrap    = document.getElementById('showMoreWrap');
+    const btn     = document.getElementById('showMoreBtn');
+    const btnText = document.getElementById('showMoreText');
 
-                categoryDiv.appendChild(slider);
-                categoryDiv.appendChild(controls);
-                container.appendChild(categoryDiv);
-            });
-        }
+    const filtered = currentCat === 'All'
+        ? SERVICES
+        : SERVICES.filter(s => s.cat === currentCat);
 
-        function scrollCerts(btn, direction) {
-            const slider = btn.parentElement.previousElementSibling;
-            const track = slider.querySelector('.cert-track');
-            const scrollAmount = 320;
+    const toShow = showAll ? filtered : filtered.slice(0, INIT_COUNT);
+    const hidden = filtered.length - toShow.length;
 
-            if (direction === 'left') {
-                track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            } else {
-                track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            }
-        }
+    // Build cards HTML
+    grid.innerHTML = toShow.map((s, i) => {
+        const idx = SERVICES.indexOf(s);
+        return `
+        <div class="svc-card reveal" style="transition-delay:${i * 0.03}s" data-idx="${idx}">
+            <img src="${s.img}" alt="${s.name}" class="svc-card-img" loading="lazy">
+            <div class="svc-card-body">
+                <h3 class="svc-name">${s.name}</h3>
+                <div class="svc-price">&#8377;${s.price.toLocaleString()}</div>
+                <div class="svc-actions">
+                    <button class="svc-btn"      data-action="book" data-idx="${idx}">Book</button>
+                    <button class="svc-btn cart-add" data-action="cart" data-idx="${idx}"><i class="fas fa-plus"></i> Add</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
 
-        function renderProjects() {
-            const track = document.getElementById('projectSlider');
-            projectsData.forEach((p, i) => {
-                const slide = document.createElement('div');
-                slide.className = `slide ${i === 0 ? 'active' : ''}`;
-                slide.innerHTML = `
-                    <div class="project-card">
-                        <div class="card-header">
-                            <img src="${p.img}" alt="${p.title}" onerror="this.src='https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=800'">
-                        </div>
-                        <div class="card-body">
-                            
-                            <h3 class="card-title">${p.title}</h3>
-                            <p class="card-desc">${p.desc}</p>
-                            <div style="margin-bottom:20px;">
-                                ${p.tags.map(t => `<span style="border:1px solid #444; padding:4px 10px; font-size:0.75rem; margin:0 5px; color:#aaa;">${t}</span>`).join('')}
-                            </div>
-                            <a href="${p.github}" class="btn btn-fill" style="padding:10px 30px; display:inline-block; text-decoration:none;">View Project</a>
-                        </div>
-                    </div>
-                `;
-                track.appendChild(slide);
-            });
-        }
+    // Trigger reveal
+    setTimeout(() => grid.querySelectorAll('.reveal').forEach(e => e.classList.add('vis')), 50);
 
-        let slideIndex = 0;
-        const updateSlider = () => {
-            const slides = document.querySelectorAll('.slide');
-            slides.forEach((s, i) => {
-                s.classList.toggle('active', i === slideIndex);
-            });
-            document.getElementById('projectSlider').style.transform = `translateX(-${slideIndex * 100}%)`;
-        };
-
-        document.getElementById('nextBtn').onclick = () => {
-            slideIndex = (slideIndex + 1) % projectsData.length;
-            updateSlider();
-        };
-
-        document.getElementById('prevBtn').onclick = () => {
-            slideIndex = (slideIndex - 1 + projectsData.length) % projectsData.length;
-            updateSlider();
-        };
-
-        function openSkillPanel(index) {
-            const panel = document.getElementById('skillPanel');
-            const overlay = document.getElementById('panelOverlay');
-            const content = document.getElementById('skillContent');
-            const data = skillsData[index];
-
-            let html = `<h2 style="color:var(--accent); margin-bottom:20px; font-family:var(--font-display);">${data.title}</h2>`;
-            data.skills.forEach(s => {
-                html += `
-                    <div class="skill-bar-wrap">
-                        <div class="skill-meta"><span>${s.name}</span><span>${s.pct}%</span></div>
-                        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
-                    </div>`;
-            });
-            content.innerHTML = html;
-            panel.classList.add('active');
-            overlay.classList.add('active');
-
-            setTimeout(() => {
-                document.querySelectorAll('.bar-fill').forEach((b, i) => {
-                    setTimeout(() => {
-                        b.style.width = data.skills[i].pct + '%';
-                    }, i * 100);
-                });
-            }, 100);
-        }
-
-        document.getElementById('closePanel').onclick = () => {
-            document.getElementById('skillPanel').classList.remove('active');
-            document.getElementById('panelOverlay').classList.remove('active');
-        };
-
-        document.getElementById('panelOverlay').onclick = () => {
-            document.getElementById('skillPanel').classList.remove('active');
-            document.getElementById('panelOverlay').classList.remove('active');
-        };
-
-        const modal = document.getElementById('certModal');
-        const modalImg = document.getElementById('modalImg');
-
-        const openModal = (src) => {
-            modalImg.src = src;
-            modal.classList.add('open');
-        };
-
-        document.querySelector('.close-modal').onclick = () => modal.classList.remove('open');
-        modal.onclick = (e) => { if(e.target === modal) modal.classList.remove('open'); };
-
-        const observerOptions = { threshold: 0.1 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+    /* FIX 2 — Attach card click for popup.
+       Use event delegation on the grid element.
+       Only trigger popup if user clicked the card itself (not a button). */
+    grid.querySelectorAll('.svc-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            // If the click target is one of the action buttons, handle separately
+            const actionBtn = e.target.closest('[data-action]');
+            if (actionBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const idx = parseInt(actionBtn.dataset.idx, 10);
+                if (actionBtn.dataset.action === 'cart') {
+                    addToCart(idx);
+                } else {
+                    // "Book" button → open popup then scroll to booking
+                    openSvcPopup(idx);
                 }
-            });
-        }, observerOptions);
-
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        const resize = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedY = Math.random() * 0.5 - 0.25;
-                this.speedX = Math.random() * 0.5 - 0.25;
+                return;
             }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if(this.x > canvas.width) this.x = 0;
-                if(this.x < 0) this.x = canvas.width;
-                if(this.y > canvas.height) this.y = 0;
-                if(this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(220, 38, 38, ${Math.random() * 0.5})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        const initParticles = () => {
-            for(let i=0; i<50; i++) particles.push(new Particle());
-        };
-
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        };
-
-        window.onload = () => {
-            renderSkills();
-            renderCerts();
-            renderProjects();
-            initParticles();
-            animate();
-
-            document.querySelectorAll('.section-title, .about-split, .skills-grid, .cert-container, .timeline-item, .project-gallery, .contact-split').forEach(el => observer.observe(el));
-
-            document.querySelectorAll('.stat-num').forEach(el => {
-                const observer = new IntersectionObserver(e => {
-                    if(e[0].isIntersecting) {
-                        const target = +el.getAttribute('data-target');
-                        const inc = target / 50;
-                        let c = 0;
-                        const update = () => {
-                            c += inc;
-                            if(c < target) {
-                                el.innerText = Math.ceil(c);
-                                requestAnimationFrame(update);
-                            } else el.innerText = target;
-                        };
-                        update();
-                        observer.unobserve(el);
-                    }
-                });
-                observer.observe(el);
-            });
-        };
-
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.getElementById('navLinks');
-
-        menuToggle.onclick = () => {
-            navLinks.classList.toggle('active');
-            const icon = menuToggle.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        };
-
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.onclick = () => {
-                navLinks.classList.remove('active');
-                const icon = menuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            };
-        });
-
-        const header = document.getElementById('header');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-
-        document.getElementById('contactForm').onsubmit = (e) => {
+            // Card body click → open popup
             e.preventDefault();
-            alert("Message sent successfully!");
-            e.target.reset();
-        };
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        document.getElementById('projectSlider').addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
+            const idx = parseInt(this.dataset.idx, 10);
+            openSvcPopup(idx);
         });
+    });
 
-        document.getElementById('projectSlider').addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
-
-        function handleSwipe() {
-            if (touchEndX < touchStartX - 50) {
-                slideIndex = (slideIndex + 1) % projectsData.length;
-                updateSlider();
-            }
-            if (touchEndX > touchStartX + 50) {
-                slideIndex = (slideIndex - 1 + projectsData.length) % projectsData.length;
-                updateSlider();
-            }
+    // Show/hide "Show More" button & update text
+    if (filtered.length > INIT_COUNT) {
+        wrap.style.display = 'block';
+        if (showAll) {
+            btnText.textContent = 'Show Less';
+            btn.classList.add('expanded');
+        } else {
+            btnText.textContent = `Show More Services (${hidden} more)`;
+            btn.classList.remove('expanded');
         }
-    </script>
+    } else {
+        wrap.style.display = 'none';
+    }
+}
+
+/* ==============================
+   FIX 2 — SERVICE POPUP
+   Opens a modal with service details.
+   No page refresh, smooth animation.
+   ============================== */
+function openSvcPopup(idx) {
+    const s = SERVICES[idx];
+    popupSvcIdx = idx;
+
+    document.getElementById('popupImg').src       = s.img;
+    document.getElementById('popupImg').alt       = s.name;
+    document.getElementById('popupCat').textContent   = s.cat;
+    document.getElementById('popupName').textContent  = s.name;
+    document.getElementById('popupPrice').innerHTML   = '&#8377;' + s.price.toLocaleString();
+    document.getElementById('popupDesc').textContent  = s.desc;
+
+    const overlay = document.getElementById('svcPopupOverlay');
+    overlay.classList.add('popup-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSvcPopup() {
+    document.getElementById('svcPopupOverlay').classList.remove('popup-open');
+    document.body.style.overflow = '';
+    popupSvcIdx = null;
+}
+
+/* Register popup listeners once (called from initServices) */
+function setupPopupListeners() {
+    // Close button
+    document.getElementById('svcPopupClose').addEventListener('click', e => {
+        e.preventDefault();
+        closeSvcPopup();
+    });
+
+    // Click outside popup box
+    document.getElementById('svcPopupOverlay').addEventListener('click', function (e) {
+        if (e.target === this) closeSvcPopup();
+    });
+
+    // Popup "Book This Service" button
+    document.getElementById('popupBookBtn').addEventListener('click', e => {
+        e.preventDefault();
+        if (popupSvcIdx !== null) {
+            addToCart(popupSvcIdx);
+            closeSvcPopup();
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Popup "Add to Cart" button
+    document.getElementById('popupCartBtn').addEventListener('click', e => {
+        e.preventDefault();
+        if (popupSvcIdx !== null) {
+            addToCart(popupSvcIdx);
+            closeSvcPopup();
+        }
+    });
+}
+
+/* ==============================
+   CART
+   ============================== */
+function addToCart(idx) {
+    const s = SERVICES[idx];
+    if (cart.find(c => c.name === s.name)) {
+        showToast(s.name + ' is already in your cart.', 'warning');
+        return;
+    }
+    cart.push({ name: s.name, price: s.price, cat: s.cat, idx });
+    localStorage.setItem('vrCart', JSON.stringify(cart));
+    updateCartUI();
+    showToast(s.name + ' added to booking!', 'success');
+}
+
+function removeFromCart(name) {
+    cart = cart.filter(c => c.name !== name);
+    localStorage.setItem('vrCart', JSON.stringify(cart));
+    updateCartUI();
+    showToast('Service removed.', 'info');
+}
+
+function updateCartUI() {
+    const badge = document.getElementById('cartBadge');
+    badge.textContent = cart.length;
+    badge.classList.toggle('visible', cart.length > 0);
+
+    const total = cart.reduce((a, c) => a + c.price, 0);
+    const ci    = document.getElementById('cartItems');
+
+    ci.innerHTML = cart.length
+        ? cart.map(c =>
+            `<div class="cart-item">
+                <div class="cart-item-info"><h4>${c.name}</h4><span>&#8377;${c.price.toLocaleString()}</span></div>
+                <button class="cart-item-remove" onclick="removeFromCart('${c.name.replace(/'/g,"\\'")}')"><i class="fas fa-times"></i></button>
+            </div>`
+          ).join('')
+        : '<div class="cart-empty"><i class="fas fa-shopping-bag"></i>Your booking cart is empty.<br>Add services to get started!</div>';
+
+    document.getElementById('cartTotal').innerHTML = '&#8377;' + total.toLocaleString();
+
+    const bs = document.getElementById('bookingCartSummary');
+    const bl = document.getElementById('bookingCartList');
+    const bt = document.getElementById('bkTotal');
+    const sn = document.getElementById('svcNote');
+
+    bs.classList.toggle('has-items', cart.length > 0);
+
+    if (cart.length > 0) {
+        bl.innerHTML = cart.map(c =>
+            `<div class="booking-cart-tag">${c.name} &mdash; &#8377;${c.price.toLocaleString()}
+             <button onclick="removeFromCart('${c.name.replace(/'/g,"\\'")}')"><i class="fas fa-times"></i></button></div>`
+        ).join('');
+        bt.innerHTML = 'Total: <b>&#8377;' + total.toLocaleString() + '</b>';
+        sn.textContent = 'Services selected from cart will be used automatically.';
+    } else {
+        sn.textContent = 'Or add services from service cards above';
+    }
+}
+
+function toggleCart() {
+    document.getElementById('cartSidebar').classList.toggle('open');
+    document.getElementById('cartOverlay').classList.toggle('show');
+}
+function cartCheckout() {
+    toggleCart();
+    document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ==============================
+   FIX 3 — TIME SLOTS
+   Renders buttons; CSS handles the premium look
+   ============================== */
+function buildTimeSlots(containerId, hiddenId) {
+    document.getElementById(containerId).innerHTML = TIME_SLOTS.map(t =>
+        `<button type="button" class="time-slot" onclick="selectSlot(this,'${t}','${hiddenId}')">${t}</button>`
+    ).join('');
+}
+
+function selectSlot(el, t, hiddenId) {
+    el.parentElement.querySelectorAll('.time-slot').forEach(s => s.classList.remove('sel'));
+    el.classList.add('sel');
+    document.getElementById(hiddenId).value = t;
+}
+
+/* ==============================
+   BOOKING FORM — Service Dropdown
+   ============================== */
+function populateBookingSelect() {
+    const sel = document.getElementById('bkService');
+    SERVICES.forEach(s => {
+        const o = document.createElement('option');
+        o.value       = s.name;
+        o.textContent = `${s.name} — ₹${s.price.toLocaleString()}`;
+        sel.appendChild(o);
+    });
+    buildTimeSlots('bkTimeSlots', 'bkTime');
+}
+
+/* ==============================
+   BOOKING FORM SUBMIT
+   Smart logic: cart OR manual select
+   ============================== */
+function handleBooking(e) {
+    e.preventDefault();
+    const name    = document.getElementById('bkName').value.trim();
+    const phone   = document.getElementById('bkPhone').value.trim();
+    const email   = document.getElementById('bkEmail').value.trim();
+    const date    = document.getElementById('bkDate').value;
+    const time    = document.getElementById('bkTime').value;
+    const manual  = document.getElementById('bkService').value;
+    const notes   = document.getElementById('bkNotes').value.trim();
+
+    if (!name)  { showToast('Please enter your full name.', 'warning'); return; }
+    if (!phone) { showToast('Please enter your phone number.', 'warning'); return; }
+    if (!date)  { showToast('Please select an appointment date.', 'warning'); return; }
+    if (!time)  { showToast('Please select a time slot.', 'warning'); return; }
+    if (!cart.length && !manual) {
+        showToast('Please select at least one salon service before booking.', 'error', 5000);
+        return;
+    }
+
+    let selectedServices = [];
+    let totalAmount = 0;
+
+    if (cart.length) {
+        selectedServices = cart.map(c => ({ name: c.name, price: c.price, category: c.cat }));
+        totalAmount = cart.reduce((a, c) => a + c.price, 0);
+    }
+    if (manual) {
+        const svc = SERVICES.find(s => s.name === manual);
+        if (svc && !selectedServices.find(ss => ss.name === svc.name)) {
+            selectedServices.push({ name: svc.name, price: svc.price, category: svc.cat });
+            totalAmount += svc.price;
+        }
+    }
+
+    const bookingId = 'VR' + Date.now().toString(36).toUpperCase();
+    const booking   = { bookingId, customerName: name, phoneNumber: phone, email, selectedServices, totalAmount, appointmentDate: date, appointmentTime: time, notes, bookingStatus: 'pending', createdAt: new Date().toISOString() };
+
+    // Save to localStorage (swap for API call when backend is ready)
+    const saved = JSON.parse(localStorage.getItem('vrBookings')) || [];
+    saved.push(booking);
+    localStorage.setItem('vrBookings', JSON.stringify(saved));
+    console.log('Booking (backend-ready):', JSON.stringify(booking, null, 2));
+
+    // Clear cart & form
+    cart = [];
+    localStorage.setItem('vrCart', JSON.stringify(cart));
+    updateCartUI();
+    e.target.reset();
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('sel'));
+    document.getElementById('bkTime').value = '';
+
+    showSuccess(booking);
+}
+
+function showSuccess(b) {
+    document.getElementById('successId').textContent = 'Booking ID: #' + b.bookingId;
+    document.getElementById('successSummary').innerHTML =
+        `<strong>Customer:</strong> ${b.customerName}<br>
+         <strong>Phone:</strong> ${b.phoneNumber}<br>
+         <strong>Date:</strong> ${b.appointmentDate}<br>
+         <strong>Time:</strong> ${b.appointmentTime}<br>
+         <strong>Services:</strong> ${b.selectedServices.map(s => s.name).join(', ')}<br>
+         <strong>Total:</strong> &#8377;${b.totalAmount.toLocaleString()}`;
+    document.getElementById('successOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    showToast('Appointment booked successfully! 🎉', 'success', 5000);
+}
+function closeSuccess() {
+    document.getElementById('successOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+/* ==============================
+   WHY / COUNTER MARQUEES
+   ============================== */
+function initWhyMarquee() {
+    const t = document.getElementById('whyMarquee');
+    const h = WHY_DATA.map(w =>
+        `<div class="why-card"><i class="fas ${w.icon}"></i><h4>${w.title}</h4><p>${w.desc}</p></div>`
+    ).join('');
+    t.innerHTML = h + h; // duplicate for seamless loop
+}
+function initCounterMarquee() {
+    const t = document.getElementById('counterTrack');
+    const h = COUNTERS.map(c =>
+        `<div class="counter-item"><div class="counter-num">${c.num}</div><div class="counter-label">${c.label}</div></div><div class="counter-dot"></div>`
+    ).join('');
+    t.innerHTML = h + h + h;
+}
+
+/* ==============================
+   GALLERY
+   ============================== */
+function initGallery() {
+    // Desktop masonry grid
+    document.getElementById('galleryGrid').innerHTML = GALLERY_DATA.map((g, i) =>
+        `<div class="gallery-item reveal" style="transition-delay:${i*0.07}s" onclick="openLb(${i})">
+            <img src="${g.src}" alt="${g.title}" loading="lazy">
+            <div class="gallery-ov"><div class="gallery-expand"><i class="fas fa-expand"></i></div><h4>${g.title}</h4><span>${g.cat}</span></div>
+        </div>`
+    ).join('');
+
+    // Mobile auto-scroll carousel
+    const items = GALLERY_DATA.map((g, i) =>
+        `<div class="gallery-carousel-item" onclick="openLb(${i})">
+            <img src="${g.src}" alt="${g.title}" loading="lazy">
+            <div class="g-ov"><h4>${g.title}</h4><span>${g.cat}</span></div>
+        </div>`
+    ).join('');
+    document.getElementById('galleryMobileCarousel').innerHTML =
+        `<div class="gallery-carousel-track">${items}${items}</div>`;
+}
+
+function openLb(i) {
+    lbIndex = i;
+    document.getElementById('lbImage').src = GALLERY_DATA[i].src;
+    document.getElementById('lbImage').alt = GALLERY_DATA[i].title;
+    document.getElementById('lightbox').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+function closeLb() {
+    document.getElementById('lightbox').classList.remove('show');
+    document.body.style.overflow = '';
+}
+function lbNav(dir) {
+    lbIndex = (lbIndex + dir + GALLERY_DATA.length) % GALLERY_DATA.length;
+    document.getElementById('lbImage').src = GALLERY_DATA[lbIndex].src;
+    document.getElementById('lbImage').alt = GALLERY_DATA[lbIndex].title;
+}
+document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('lightbox')) closeLb();
+});
+
+/* ==============================
+   REVIEW MARQUEE
+   ============================== */
+function initReviewMarquee() {
+    const t = document.getElementById('reviewTrack');
+    const h = REVIEWS.map(r =>
+        `<div class="review-card">
+            <span class="review-quote">&ldquo;</span>
+            <div class="review-stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
+            <p class="review-text">${r.text}</p>
+            <div class="review-author">
+                <div class="review-avatar">${r.init}</div>
+                <div class="review-info"><h4>${r.name}</h4><span>Verified Client</span></div>
+            </div>
+        </div>`
+    ).join('');
+    t.innerHTML = h + h;
+}
+
+/* ==============================
+   SMOOTH SCROLL FOR ANCHOR LINKS
+   ============================== */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+
+/* ==============================
+   KEYBOARD SHORTCUTS
+   Escape: close all overlays
+   Arrows: navigate lightbox
+   ============================== */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeSvcPopup();   // FIX 2
+        closeLb();
+        closeSuccess();
+        if (document.getElementById('cartSidebar').classList.contains('open')) toggleCart();
+        closeMenu();
+    }
+    if (document.getElementById('lightbox').classList.contains('show')) {
+        if (e.key === 'ArrowLeft')  lbNav(-1);
+        if (e.key === 'ArrowRight') lbNav(1);
+    }
+});
+
+// Success overlay: click backdrop to close
+document.getElementById('successOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('successOverlay')) closeSuccess();
+});
+
+//developer credit 
+
+  const openDevPopup = document.getElementById("openDevPopup");
+  const devPopup = document.getElementById("devPopup");
+  const closeDevPopup = document.getElementById("closeDevPopup");
+
+  openDevPopup.addEventListener("click", () => {
+    devPopup.classList.add("active");
+  });
+
+  closeDevPopup.addEventListener("click", () => {
+    devPopup.classList.remove("active");
+  });
+
+  devPopup.addEventListener("click", (e) => {
+    if (e.target === devPopup) {
+      devPopup.classList.remove("active");
+    }
+  });
+</script>
 </body>
 </html>
